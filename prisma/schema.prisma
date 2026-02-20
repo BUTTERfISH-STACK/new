@@ -1,0 +1,124 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// AI-Ready: Add sentiment_score, ai_score, forecast-confidence for future AI features
+// Activity type enum for tracking interactions
+enum ActivityType {
+  CALL
+  EMAIL
+  MEETING
+  NOTE
+}
+
+// Deal stage enum for pipeline management
+enum DealStage {
+  LEAD
+  QUALIFIED
+  PROPOSAL
+  NEGOTIATION
+  CLOSED_WON
+  CLOSED_LOST
+}
+
+// Company model - represents businesses
+model Company {
+  id        String   @id @default(cuid())
+  name      String
+  industry  String?
+  website   String?
+  address   String?
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  contacts  Contact[]
+  deals      Deal[]
+}
+
+// Contact model - represents individuals
+model Contact {
+  id        String   @id @default(cuid())
+  firstName String
+  lastName  String
+  email     String?
+  phone     String?
+  position  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  companyId String?
+  company   Company? @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  deals     Deal[]
+
+  // AI-Ready: Add sentiment_score for future sentiment analysis
+  // sentimentScore Float?
+}
+
+// Deal model - represents sales opportunities
+model Deal {
+  id               String     @id @default(cuid())
+  title            String
+  value            Float      @default(0)
+  stage            DealStage  @default(LEAD)
+  probability      Int        @default(0) // 0-100 percentage
+  expectedCloseDate DateTime?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  // AI-Ready: Add ai_score, forecast_amount, sentiment_analysis for future AI
+  // aiScore         Float?
+  // forecastAmount Float?
+  // sentimentAnalysis String?
+
+  // Relations
+  companyId        String?
+  company          Company?   @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  contactId        String?
+  contact          Contact?   @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  
+  tasks            Task[]
+  activities       Activity[]
+}
+
+// Task model - represents action items
+model Task {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  dueDate     DateTime?
+  completed   Boolean   @default(false)
+  priority    String    @default("medium") // low, medium, high
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  dealId      String?
+  deal        Deal?     @relation(fields: [dealId], references: [id], onDelete: Cascade)
+}
+
+// Activity model - represents interactions and notes
+model Activity {
+  id          String       @id @default(cuid())
+  type        ActivityType
+  description String
+  createdAt   DateTime     @default(now())
+
+  // AI-Ready: Add sentiment, ai_summary for future AI features
+  // sentiment   Float?
+  // aiSummary   String?
+
+  // Relations
+  dealId      String?
+  deal        Deal?        @relation(fields: [dealId], references: [id], onDelete: Cascade)
+}
