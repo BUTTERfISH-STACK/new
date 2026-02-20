@@ -33,6 +33,7 @@ export interface Deal {
   id: string
   title: string
   value: number
+  currency?: string
   stage: DealStage
   probability: number
   expectedCloseDate?: Date | null
@@ -40,6 +41,7 @@ export interface Deal {
   company?: Company | null
   contactId?: string | null
   contact?: Contact | null
+  notes?: string | null
   createdAt: Date
   updatedAt: Date
 }
@@ -117,11 +119,13 @@ export interface ContactFormData {
 export interface DealFormData {
   title: string
   value: number
+  currency?: string
   stage: DealStage
   probability: number
   expectedCloseDate?: Date
   companyId?: string
   contactId?: string
+  notes?: string
 }
 
 export interface TaskFormData {

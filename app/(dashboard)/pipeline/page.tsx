@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import {
   DndContext,
   DragOverlay,
@@ -17,19 +17,33 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
 import { DealCard } from '@/components/pipeline/deal-card'
 import { DealColumn } from '@/components/pipeline/deal-column'
 import { CreateDealDialog } from '@/components/pipeline/create-deal-dialog'
 import { Button } from '@/components/ui/button'
-import { Plus, LayoutGrid, List, Calendar, Flame } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { 
+  Plus, 
+  LayoutGrid, 
+  List, 
+  Calendar, 
+  Flame,
+  Search,
+  Filter,
+  RefreshCw,
+  TrendingUp,
+  DollarSign,
+  Target,
+  Clock,
+  X
+} from 'lucide-react'
 import { DealStage, Deal } from '@/types'
-import { isFeatureEnabled } from '@/lib/featureFlags'
 import { cn } from '@/lib/utils'
 
 // Table view component
-function TableView({ deals }: { deals: Deal[] }) {
+function TableView({ deals, onEdit }: { deals: Deal[]; onEdit?: (deal: Deal) => void }) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full">
@@ -41,14 +55,15 @@ function TableView({ deals }: { deals: Deal[] }) {
             <th className="pb-3 font-medium">Stage</th>
             <th className="pb-3 font-medium">Probability</th>
             <th className="pb-3 font-medium">Expected Close</th>
+            <th className="pb-3 font-medium">Weighted</th>
           </tr>
         </thead>
         <tbody>
           {deals.map((deal) => (
-            <tr key={deal.id} className="border-b hover:bg-muted/50">
+            <tr key={deal.id} className="border-b hover:bg-muted/50 cursor-pointer" onClick={() => onEdit?.(deal)}>
               <td className="py-3 font-medium">{deal.title}</td>
               <td className="py-3">{deal.company?.name || '-'}</td>
-              <td className="py-3">${deal.value.toLocaleString()}</td>
+              <td className="py-3 font-semibold">${deal.value.toLocaleString()}</td>
               <td className="py-3">
                 <span className={cn(
                   "px-2 py-1 rounded text-xs",
@@ -62,11 +77,29 @@ function TableView({ deals }: { deals: Deal[] }) {
                   {deal.stage.replace('_', ' ')}
                 </span>
               </td>
-              <td className="py-3">{deal.probability}%</td>
+              <td className="py-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-16 h-2 bg-muted rounded-full overflow-hidden">
+                    <div 
+                      className={cn(
+                        "h-full rounded-full",
+                        deal.probability >= 75 ? "bg-green-500" :
+                        deal.probability >= 50 ? "bg-blue-500" :
+                        deal.probability >= 25 ? "bg-yellow-500" : "bg-red-500"
+                      )}
+                      style={{ width: `${deal.probability}%` }}
+                    />
+                  </div>
+                  <span className="text-sm">{deal.probability}%</span>
+                </div>
+              </td>
               <td className="py-3">
                 {deal.expectedCloseDate 
                   ? new Date(deal.expectedCloseDate).toLocaleDateString() 
                   : '-'}
+              </td>
+              <td className="py-3 font-medium text-primary">
+                ${Math.round(deal.value * deal.probability / 100).toLocaleString()}
               </td>
             </tr>
           ))}
@@ -90,21 +123,24 @@ function TimelineView({ deals }: { deals: Deal[] }) {
   return (
     <div className="space-y-4">
       {deals.map((deal) => (
-        <div key={deal.id} className="flex items-center gap-4 p-3 border rounded-lg">
-          <div className="w-32 font-medium">{deal.title}</div>
-          <div className="flex-1 h-8 bg-muted rounded-full overflow-hidden relative">
+        <div key={deal.id} className="flex items-center gap-4 p-4 border rounded-lg bg-card">
+          <div className="w-48 font-medium truncate">{deal.title}</div>
+          <div className="flex-1 h-10 bg-muted rounded-full overflow-hidden relative">
             <div 
               className={cn("h-full absolute left-0 top-0", stageColors[deal.stage])}
               style={{ width: `${(deal.probability)}%` }}
             />
-            <span className="absolute inset-0 flex items-center justify-center text-xs font-medium">
-              {deal.value.toLocaleString()}
+            <span className="absolute inset-0 flex items-center justify-center text-sm font-medium">
+              ${deal.value.toLocaleString()}
             </span>
           </div>
-          <div className="w-24 text-sm text-muted-foreground">
+          <div className="w-32 text-sm text-muted-foreground">
             {deal.expectedCloseDate 
               ? new Date(deal.expectedCloseDate).toLocaleDateString() 
               : 'No date'}
+          </div>
+          <div className="w-20 text-sm font-medium text-primary">
+            ${Math.round(deal.value * deal.probability / 100).toLocaleString()}
           </div>
         </div>
       ))}
@@ -179,13 +215,28 @@ const VIEW_OPTIONS: { value: PipelineView; label: string; icon: typeof LayoutGri
   { value: 'heatmap', label: 'Heatmap', icon: Flame },
 ]
 
+interface PipelineStats {
+  totalValue: number
+  weightedValue: number
+  wonValue: number
+  avgProbability: number
+  dealsCount: number
+}
+
 export default function PipelinePage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [deals, setDeals] = useState<Deal[]>([])
   const [loading, setLoading] = useState(true)
   const [activeId, setActiveId] = useState<string | null>(null)
   const [createOpen, setCreateOpen] = useState(false)
   const [view, setView] = useState<PipelineView>('kanban')
+  
+  // Search and filter states
+  const [searchQuery, setSearchQuery] = useState('')
+  const [stageFilter, setStageFilter] = useState<DealStage | 'ALL'>('ALL')
+  const [minValue, setMinValue] = useState<number>(0)
+  const [showFilters, setShowFilters] = useState(false)
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -199,6 +250,7 @@ export default function PipelinePage() {
   )
 
   const fetchDeals = useCallback(async () => {
+    setLoading(true)
     try {
       const res = await fetch('/api/deals')
       if (res.ok) {
@@ -216,8 +268,56 @@ export default function PipelinePage() {
     fetchDeals()
   }, [fetchDeals])
 
+  // Check if we should open create dialog from URL
+  useEffect(() => {
+    if (searchParams.get('new') === 'true') {
+      setCreateOpen(true)
+      router.replace('/pipeline')
+    }
+  }, [searchParams, router])
+
+  // Filter deals based on search and filters
+  const filteredDeals = useMemo(() => {
+    return deals.filter(deal => {
+      // Search filter
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase()
+        const matchesTitle = deal.title.toLowerCase().includes(query)
+        const matchesCompany = deal.company?.name.toLowerCase().includes(query)
+        const matchesContact = deal.contact ? 
+          `${deal.contact.firstName} ${deal.contact.lastName}`.toLowerCase().includes(query) 
+          : false
+        if (!matchesTitle && !matchesCompany && !matchesContact) return false
+      }
+      
+      // Stage filter
+      if (stageFilter !== 'ALL' && deal.stage !== stageFilter) return false
+      
+      // Min value filter
+      if (deal.value < minValue) return false
+      
+      return true
+    })
+  }, [deals, searchQuery, stageFilter, minValue])
+
+  // Calculate stats
+  const stats: PipelineStats = useMemo(() => {
+    const activeDeals = filteredDeals.filter(d => !['CLOSED_WON', 'CLOSED_LOST'].includes(d.stage))
+    const wonDeals = filteredDeals.filter(d => d.stage === 'CLOSED_WON')
+    
+    return {
+      totalValue: filteredDeals.reduce((sum, d) => sum + d.value, 0),
+      weightedValue: filteredDeals.reduce((sum, d) => sum + (d.value * d.probability / 100), 0),
+      wonValue: wonDeals.reduce((sum, d) => sum + d.value, 0),
+      avgProbability: activeDeals.length > 0 
+        ? Math.round(activeDeals.reduce((sum, d) => sum + d.probability, 0) / activeDeals.length)
+        : 0,
+      dealsCount: filteredDeals.length
+    }
+  }, [filteredDeals])
+
   const dealsByStage = STAGES.reduce((acc, stage) => {
-    acc[stage] = deals.filter((deal) => deal.stage === stage)
+    acc[stage] = filteredDeals.filter((deal) => deal.stage === stage)
     return acc
   }, {} as Record<DealStage, Deal[]>)
 
@@ -239,6 +339,7 @@ export default function PipelinePage() {
 
     if (deal.stage === newStage) return
 
+    // Optimistic update
     setDeals((prev) =>
       prev.map((d) =>
         d.id === dealId ? { ...d, stage: newStage } : d
@@ -253,6 +354,7 @@ export default function PipelinePage() {
       })
 
       if (!res.ok) {
+        // Rollback on error
         setDeals((prev) =>
           prev.map((d) =>
             d.id === dealId ? { ...d, stage: deal.stage } : d
@@ -274,6 +376,15 @@ export default function PipelinePage() {
   }
 
   const activeDeal = activeId ? deals.find((d) => d.id === activeId) : null
+
+  // Clear all filters
+  const clearFilters = () => {
+    setSearchQuery('')
+    setStageFilter('ALL')
+    setMinValue(0)
+  }
+
+  const hasActiveFilters = searchQuery || stageFilter !== 'ALL' || minValue > 0
 
   if (loading) {
     return (
@@ -304,47 +415,155 @@ export default function PipelinePage() {
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between border-b p-6">
-        <div>
-          <h1 className="text-2xl font-bold">Pipeline</h1>
-          <p className="text-sm text-muted-foreground">
-            {view === 'kanban' 
-              ? 'Drag and drop deals to update their stage'
-              : view === 'table'
-              ? 'View deals in table format'
-              : view === 'timeline'
-              ? 'View deal progress timeline'
-              : 'Revenue distribution by stage'}
-          </p>
-        </div>
-        <div className="flex items-center gap-4">
-          {/* View Toggle */}
-          <div className="flex items-center bg-muted rounded-lg p-1">
-            {VIEW_OPTIONS.map((option) => {
-              const Icon = option.icon
-              return (
-                <button
-                  key={option.value}
-                  onClick={() => setView(option.value)}
-                  className={cn(
-                    "flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-colors",
-                    view === option.value 
-                      ? "bg-background shadow-sm" 
-                      : "text-muted-foreground hover:text-foreground"
-                  )}
-                  title={option.label}
-                >
-                  <Icon className="h-4 w-4" />
-                  <span className="hidden md:inline">{option.label}</span>
-                </button>
-              )
-            })}
+      <div className="border-b p-6 space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">Pipeline</h1>
+            <p className="text-sm text-muted-foreground">
+              {view === 'kanban' 
+                ? 'Drag and drop deals to update their stage'
+                : view === 'table'
+                ? 'View deals in table format'
+                : view === 'timeline'
+                ? 'View deal progress timeline'
+                : 'Revenue distribution by stage'}
+            </p>
           </div>
-          <Button onClick={() => setCreateOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            New Deal
+          <div className="flex items-center gap-4">
+            {/* View Toggle */}
+            <div className="flex items-center bg-muted rounded-lg p-1">
+              {VIEW_OPTIONS.map((option) => {
+                const Icon = option.icon
+                return (
+                  <button
+                    key={option.value}
+                    onClick={() => setView(option.value)}
+                    className={cn(
+                      "flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-colors",
+                      view === option.value 
+                        ? "bg-background shadow-sm" 
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                    title={option.label}
+                  >
+                    <Icon className="h-4 w-4" />
+                    <span className="hidden md:inline">{option.label}</span>
+                  </button>
+                )
+              })}
+            </div>
+            <Button onClick={() => setCreateOpen(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              New Deal
+            </Button>
+          </div>
+        </div>
+        
+        {/* Stats Bar */}
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <div className="bg-muted/30 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+              <DollarSign className="h-3 w-3" />
+              Total Value
+            </div>
+            <div className="text-lg font-bold">${stats.totalValue.toLocaleString()}</div>
+          </div>
+          <div className="bg-muted/30 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+              <Target className="h-3 w-3" />
+              Weighted Value
+            </div>
+            <div className="text-lg font-bold text-primary">${Math.round(stats.weightedValue).toLocaleString()}</div>
+          </div>
+          <div className="bg-muted/30 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+              <TrendingUp className="h-3 w-3" />
+              Won Value
+            </div>
+            <div className="text-lg font-bold text-green-600">${stats.wonValue.toLocaleString()}</div>
+          </div>
+          <div className="bg-muted/30 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+              <Clock className="h-3 w-3" />
+              Avg Probability
+            </div>
+            <div className="text-lg font-bold">{stats.avgProbability}%</div>
+          </div>
+          <div className="bg-muted/30 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+              <LayoutGrid className="h-3 w-3" />
+              Total Deals
+            </div>
+            <div className="text-lg font-bold">{stats.dealsCount}</div>
+          </div>
+        </div>
+        
+        {/* Search and Filters */}
+        <div className="flex items-center gap-3">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search deals, companies, contacts..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+          
+          <Button
+            variant={showFilters ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            <Filter className="h-4 w-4 mr-2" />
+            Filters
+          </Button>
+          
+          {hasActiveFilters && (
+            <Button variant="ghost" size="sm" onClick={clearFilters}>
+              <X className="h-4 w-4 mr-1" />
+              Clear
+            </Button>
+          )}
+          
+          <Button variant="outline" size="sm" onClick={fetchDeals}>
+            <RefreshCw className="h-4 w-4" />
           </Button>
         </div>
+        
+        {/* Filter Panel */}
+        {showFilters && (
+          <div className="flex items-center gap-4 p-4 bg-muted/30 rounded-lg">
+            <div className="space-y-1">
+              <label className="text-xs text-muted-foreground">Stage</label>
+              <select
+                className="h-9 rounded-md border border-input bg-background px-3 py-1 text-sm"
+                value={stageFilter}
+                onChange={(e) => setStageFilter(e.target.value as DealStage | 'ALL')}
+              >
+                <option value="ALL">All Stages</option>
+                {STAGES.map((stage) => (
+                  <option key={stage} value={stage}>{STAGE_LABELS[stage]}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div className="space-y-1">
+              <label className="text-xs text-muted-foreground">Min Value</label>
+              <Input
+                type="number"
+                placeholder="0"
+                value={minValue || ''}
+                onChange={(e) => setMinValue(parseInt(e.target.value) || 0)}
+                className="h-9 w-32"
+              />
+            </div>
+            
+            <div className="text-xs text-muted-foreground">
+              Showing {filteredDeals.length} of {deals.length} deals
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Pipeline Content */}
@@ -375,11 +594,11 @@ export default function PipelinePage() {
           </DndContext>
         )}
 
-        {view === 'table' && <TableView deals={deals} />}
+        {view === 'table' && <TableView deals={filteredDeals} />}
         
-        {view === 'timeline' && <TimelineView deals={deals} />}
+        {view === 'timeline' && <TimelineView deals={filteredDeals} />}
         
-        {view === 'heatmap' && <RevenueHeatmap deals={deals} />}
+        {view === 'heatmap' && <RevenueHeatmap deals={filteredDeals} />}
       </div>
 
       {/* Create Deal Dialog */}

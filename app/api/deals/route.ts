@@ -5,11 +5,13 @@ import prisma from '@/lib/prisma'
 const dealSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   value: z.number().min(0, 'Value must be positive'),
+  currency: z.string().optional().default('USD'),
   stage: z.enum(['LEAD', 'QUALIFIED', 'PROPOSAL', 'NEGOTIATION', 'CLOSED_WON', 'CLOSED_LOST']),
   probability: z.number().min(0).max(100),
   expectedCloseDate: z.string().optional(),
   companyId: z.string().optional(),
   contactId: z.string().optional(),
+  notes: z.string().optional(),
 })
 
 export async function GET(request: NextRequest) {
