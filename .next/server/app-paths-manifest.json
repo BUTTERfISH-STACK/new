@@ -1,5 +1,6 @@
 {
-  "/api/dashboard/route": "app/api/dashboard/route.js",
-  "/api/companies/route": "app/api/companies/route.js",
-  "/api/deals/route": "app/api/deals/route.js"
+  "/api/deals/[id]/route": "app/api/deals/[id]/route.js",
+  "/api/tasks/route": "app/api/tasks/route.js",
+  "/api/contacts/route": "app/api/contacts/route.js",
+  "/api/dashboard/route": "app/api/dashboard/route.js"
 }
