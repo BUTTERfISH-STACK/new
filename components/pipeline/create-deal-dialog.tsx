@@ -195,7 +195,7 @@ export function CreateDealDialog({
       newErrors.title = 'Deal title is required'
     }
     
-    const value = parseFloat(formData.value)
+    const value = formData.value ? parseFloat(formData.value) : 0
     if (formData.value && isNaN(value)) {
       newErrors.value = 'Please enter a valid number'
     }
@@ -221,7 +221,7 @@ export function CreateDealDialog({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: formData.title,
-          value: parseFloat(formData.value) || 0,
+          value: formData.value ? parseFloat(formData.value) : 0,
           currency: formData.currency,
           stage: formData.stage,
           probability: formData.probability,
