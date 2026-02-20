@@ -1,6 +1,5 @@
-import { DealStage, ActivityType } from '@prisma/client'
-
-export type { DealStage, ActivityType }
+export type DealStage = 'LEAD' | 'QUALIFIED' | 'PROPOSAL' | 'NEGOTIATION' | 'CLOSED_WON' | 'CLOSED_LOST'
+export type ActivityType = 'CALL' | 'EMAIL' | 'MEETING' | 'NOTE'
 
 export interface Company {
   id: string
@@ -33,7 +32,6 @@ export interface Contact {
 export interface Deal {
   id: string
   title: string
-
   value: number
   stage: DealStage
   probability: number

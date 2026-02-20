@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
-import { DealStage } from '@prisma/client'
+
+type DealStage = 'LEAD' | 'QUALIFIED' | 'PROPOSAL' | 'NEGOTIATION' | 'CLOSED_WON' | 'CLOSED_LOST'
 
 export async function GET() {
   try {
@@ -16,38 +17,38 @@ export async function GET() {
     const totalDeals = deals.length
     const totalValue = deals.reduce((sum, deal) => sum + deal.value, 0)
     const wonValue = deals
-      .filter((deal) => deal.stage === DealStage.CLOSED_WON)
+      .filter((deal) => deal.stage === 'CLOSED_WON')
       .reduce((sum, deal) => sum + deal.value, 0)
 
     // Calculate forecast (weighted by probability for open deals)
     const forecast = deals.reduce((sum, deal) => {
-      if (deal.stage === DealStage.CLOSED_WON) return sum + deal.value
-      if (deal.stage === DealStage.CLOSED_LOST) return sum
+      if (deal.stage === 'CLOSED_WON') return sum + deal.value
+      if (deal.stage === 'CLOSED_LOST') return sum
       return sum + deal.value * (deal.probability / 100)
     }, 0)
 
     // Deals by stage
     const dealsByStage: Record<DealStage, number> = {
-      [DealStage.LEAD]: 0,
-      [DealStage.QUALIFIED]: 0,
-      [DealStage.PROPOSAL]: 0,
-      [DealStage.NEGOTIATION]: 0,
-      [DealStage.CLOSED_WON]: 0,
-      [DealStage.CLOSED_LOST]: 0,
+      'LEAD': 0,
+      'QUALIFIED': 0,
+      'PROPOSAL': 0,
+      'NEGOTIATION': 0,
+      'CLOSED_WON': 0,
+      'CLOSED_LOST': 0,
     }
 
     const valueByStage: Record<DealStage, number> = {
-      [DealStage.LEAD]: 0,
-      [DealStage.QUALIFIED]: 0,
-      [DealStage.PROPOSAL]: 0,
-      [DealStage.NEGOTIATION]: 0,
-      [DealStage.CLOSED_WON]: 0,
-      [DealStage.CLOSED_LOST]: 0,
+      'LEAD': 0,
+      'QUALIFIED': 0,
+      'PROPOSAL': 0,
+      'NEGOTIATION': 0,
+      'CLOSED_WON': 0,
+      'CLOSED_LOST': 0,
     }
 
     deals.forEach((deal) => {
-      dealsByStage[deal.stage]++
-      valueByStage[deal.stage] += deal.value
+      dealsByStage[deal.stage as DealStage]++
+      valueByStage[deal.stage as DealStage] += deal.value
     })
 
     // Tasks due today

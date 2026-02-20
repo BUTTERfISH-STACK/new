@@ -6,27 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
-}
-
-// AI-Ready: Add sentiment_score, ai_score, forecast-confidence for future AI features
-// Activity type enum for tracking interactions
-enum ActivityType {
-  CALL
-  EMAIL
-  MEETING
-  NOTE
-}
-
-// Deal stage enum for pipeline management
-enum DealStage {
-  LEAD
-  QUALIFIED
-  PROPOSAL
-  NEGOTIATION
-  CLOSED_WON
-  CLOSED_LOST
 }
 
 // Company model - represents businesses
@@ -60,26 +41,18 @@ model Contact {
   companyId String?
   company   Company? @relation(fields: [companyId], references: [id], onDelete: SetNull)
   deals     Deal[]
-
-  // AI-Ready: Add sentiment_score for future sentiment analysis
-  // sentimentScore Float?
 }
 
 // Deal model - represents sales opportunities
 model Deal {
-  id               String     @id @default(cuid())
+  id               String   @id @default(cuid())
   title            String
-  value            Float      @default(0)
-  stage            DealStage  @default(LEAD)
-  probability      Int        @default(0) // 0-100 percentage
+  value            Float    @default(0)
+  stage            String   @default("LEAD") // LEAD, QUALIFIED, PROPOSAL, NEGOTIATION, CLOSED_WON, CLOSED_LOST
+  probability     Int      @default(0) // 0-100 percentage
   expectedCloseDate DateTime?
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
-
-  // AI-Ready: Add ai_score, forecast_amount, sentiment_analysis for future AI
-  // aiScore         Float?
-  // forecastAmount Float?
-  // sentimentAnalysis String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   // Relations
   companyId        String?
@@ -109,16 +82,12 @@ model Task {
 
 // Activity model - represents interactions and notes
 model Activity {
-  id          String       @id @default(cuid())
-  type        ActivityType
+  id          String   @id @default(cuid())
+  type        String   @default("NOTE") // CALL, EMAIL, MEETING, NOTE
   description String
-  createdAt   DateTime     @default(now())
-
-  // AI-Ready: Add sentiment, ai_summary for future AI features
-  // sentiment   Float?
-  // aiSummary   String?
+  createdAt   DateTime @default(now())
 
   // Relations
   dealId      String?
-  deal        Deal?        @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  deal        Deal?    @relation(fields: [dealId], references: [id], onDelete: Cascade)
 }

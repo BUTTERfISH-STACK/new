@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import prisma from '@/lib/prisma'
-import { ActivityType } from '@prisma/client'
 
 const activitySchema = z.object({
-  type: z.nativeEnum(ActivityType),
+  type: z.enum(['CALL', 'EMAIL', 'MEETING', 'NOTE']),
   description: z.string().min(1, 'Description is required'),
   dealId: z.string().optional(),
 })

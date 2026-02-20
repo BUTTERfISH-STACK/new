@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import prisma from '@/lib/prisma'
-import { DealStage } from '@prisma/client'
 
 const dealSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   value: z.number().min(0, 'Value must be positive'),
-  stage: z.nativeEnum(DealStage),
+  stage: z.enum(['LEAD', 'QUALIFIED', 'PROPOSAL', 'NEGOTIATION', 'CLOSED_WON', 'CLOSED_LOST']),
   probability: z.number().min(0).max(100),
   expectedCloseDate: z.string().optional(),
   companyId: z.string().optional(),
