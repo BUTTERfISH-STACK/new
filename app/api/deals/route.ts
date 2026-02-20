@@ -5,12 +5,12 @@ import prisma from '@/lib/prisma'
 const dealSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   value: z.number().min(0, 'Value must be positive'),
-  currency: z.string().optional().default('USD'),
-  stage: z.enum(['LEAD', 'QUALIFIED', 'PROPOSAL', 'NEGOTIATION', 'CLOSED_WON', 'CLOSED_LOST']),
+  currency: z.string().optional(),
+  stage: z.string(),
   probability: z.number().min(0).max(100),
   expectedCloseDate: z.string().optional(),
-  companyId: z.string().optional(),
-  contactId: z.string().optional(),
+  companyId: z.string().optional().nullable(),
+  contactId: z.string().optional().nullable(),
   notes: z.string().optional(),
 })
 
@@ -69,12 +69,17 @@ export async function POST(request: NextRequest) {
 
     const deal = await prisma.deal.create({
       data: {
-        ...validatedData,
+        title: validatedData.title,
+        value: validatedData.value,
+        currency: validatedData.currency || 'USD',
+        stage: validatedData.stage,
+        probability: validatedData.probability,
         expectedCloseDate: validatedData.expectedCloseDate 
           ? new Date(validatedData.expectedCloseDate) 
           : null,
-        companyId: validatedData.companyId || null,
-        contactId: validatedData.contactId || null,
+        companyId: validatedData.companyId,
+        contactId: validatedData.contactId,
+        notes: validatedData.notes,
       },
       include: {
         company: true,

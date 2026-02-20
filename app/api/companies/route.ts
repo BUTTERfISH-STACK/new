@@ -9,7 +9,7 @@ validateEnv()
 const companySchema = z.object({
   name: z.string().min(1, 'Name is required'),
   industry: z.string().optional(),
-  website: z.string().url().optional().or(z.literal('')),
+  website: z.string().optional(),
   address: z.string().optional(),
   phone: z.string().optional(),
 })
