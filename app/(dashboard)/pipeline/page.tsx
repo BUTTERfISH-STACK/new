@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback, useMemo } from 'react'
+import { useEffect, useState, useCallback, useMemo, Suspense } from 'react'
 import {
   DndContext,
   DragOverlay,
@@ -223,7 +223,8 @@ interface PipelineStats {
   dealsCount: number
 }
 
-export default function PipelinePage() {
+// Inner component that uses useSearchParams
+function PipelineContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [deals, setDeals] = useState<Deal[]>([])
@@ -611,5 +612,41 @@ export default function PipelinePage() {
         }}
       />
     </div>
+  )
+}
+
+// Loading fallback component
+function PipelineLoading() {
+  return (
+    <div className="p-8">
+      <div className="mb-6 flex items-center justify-between">
+        <div className="h-8 w-32 animate-pulse rounded bg-muted" />
+        <div className="h-10 w-32 animate-pulse rounded bg-muted" />
+      </div>
+      <div className="flex gap-4 overflow-x-auto pb-4">
+        {STAGES.map((stage) => (
+          <div
+            key={stage}
+            className="min-w-[280px] flex-1 rounded-lg bg-muted/50 p-4"
+          >
+            <div className="mb-4 h-6 w-24 animate-pulse rounded bg-muted" />
+            <div className="space-y-3">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="h-24 animate-pulse rounded bg-muted" />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// Main page component with Suspense boundary
+export default function PipelinePage() {
+  return (
+    <Suspense fallback={<PipelineLoading />}>
+      <PipelineContent />
+    </Suspense>
   )
 }
