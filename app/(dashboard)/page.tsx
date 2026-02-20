@@ -251,15 +251,15 @@ export default function DashboardPage() {
                   ))}
                 </Pie>
                 <Tooltip
-                  formatter={(value: number, name: string, props: { payload: { amount: number } }) => [
-                    formatCurrency(props.payload.amount),
-                    name,
-                  ]}
                   contentStyle={{
                     backgroundColor: 'hsl(var(--card))',
                     border: '1px solid hsl(var(--border))',
                     borderRadius: '8px',
                   }}
+                  formatter={(value, name, props) => [
+                    formatCurrency(props?.payload?.amount || 0),
+                    name,
+                  ]}
                 />
               </PieChart>
             </ResponsiveContainer>
