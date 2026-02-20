@@ -222,6 +222,7 @@ export function CreateDealDialog({
         body: JSON.stringify({
           title: formData.title,
           value: parseFloat(formData.value) || 0,
+          currency: formData.currency,
           stage: formData.stage,
           probability: formData.probability,
           companyId: formData.companyId || null,
