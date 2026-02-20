@@ -21,6 +21,8 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { formatCurrency } from '@/lib/utils'
+import { isFeatureEnabled } from '@/lib/featureFlags'
+import { AiCommandCenter } from '@/features/advanced/aiCommandCenter/AiCommandCenter'
 import {
   DollarSign,
   Briefcase,
@@ -348,6 +350,13 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* AI Command Center - Conditionally rendered */}
+      {isFeatureEnabled('ENABLE_AI_COMMAND_CENTER') && (
+        <div className="mt-8">
+          <AiCommandCenter />
+        </div>
+      )}
     </div>
   )
 }

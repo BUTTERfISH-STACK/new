@@ -24,6 +24,9 @@ model Company {
   // Relations
   contacts  Contact[]
   deals      Deal[]
+  emails    Email[]
+  calls     CallLog[]
+  meetings  Meeting[]
 }
 
 // Contact model - represents individuals
@@ -41,6 +44,9 @@ model Contact {
   companyId String?
   company   Company? @relation(fields: [companyId], references: [id], onDelete: SetNull)
   deals     Deal[]
+  emails    Email[]
+  calls     CallLog[]
+  meetings  Meeting[]
 }
 
 // Deal model - represents sales opportunities
@@ -62,6 +68,9 @@ model Deal {
   
   tasks            Task[]
   activities       Activity[]
+  emails           Email[]
+  calls            CallLog[]
+  meetings         Meeting[]
 }
 
 // Task model - represents action items
@@ -90,4 +99,108 @@ model Activity {
   // Relations
   dealId      String?
   deal        Deal?    @relation(fields: [dealId], references: [id], onDelete: Cascade)
+}
+
+// ============================================
+// COMMUNICATION LAYER MODELS
+// ============================================
+
+model Email {
+  id          String   @id @default(cuid())
+  subject     String
+  body        String
+  fromEmail   String
+  toEmail     String
+  direction   String
+  status      String
+  sentAt      DateTime?
+  openedAt    DateTime?
+  createdAt   DateTime @default(now())
+
+  dealId      String?
+  deal        Deal?    @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  companyId   String?
+  company     Company? @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  contactId   String?
+  contact     Contact? @relation(fields: [contactId], references: [id], onDelete: SetNull)
+}
+
+model CallLog {
+  id          String   @id @default(cuid())
+  subject     String?
+  duration    Int
+  direction   String
+  status      String
+  notes       String?
+  callAt      DateTime
+  createdAt   DateTime @default(now())
+
+  dealId      String?
+  deal        Deal?    @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  companyId   String?
+  company     Company? @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  contactId   String?
+  contact     Contact? @relation(fields: [contactId], references: [id], onDelete: SetNull)
+}
+
+model Meeting {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  location    String?
+  startTime   DateTime
+  endTime     DateTime
+  status      String
+  notes       String?
+  createdAt   DateTime @default(now())
+
+  dealId      String?
+  deal        Deal?    @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  companyId   String?
+  company     Company? @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  contactId   String?
+  contact     Contact? @relation(fields: [contactId], references: [id], onDelete: SetNull)
+}
+
+// ============================================
+// AUTOMATION ENGINE MODELS
+// ============================================
+
+model Automation {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  enabled     Boolean  @default(true)
+  triggerType String
+  actionType  String
+  actionConfig String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  triggers    AutomationTrigger[]
+  actions     AutomationAction[]
+}
+
+model AutomationTrigger {
+  id            String     @id @default(cuid())
+  automationId  String
+  field         String
+  operator      String
+  value         String
+  createdAt     DateTime   @default(now())
+
+  automation    Automation @relation(fields: [automationId], references: [id], onDelete: Cascade)
+}
+
+model AutomationAction {
+  id            String     @id @default(cuid())
+  automationId  String
+  actionType    String
+  config        String
+  executedAt    DateTime?
+  status        String
+  error         String?
+  createdAt     DateTime   @default(now())
+
+  automation    Automation @relation(fields: [automationId], references: [id], onDelete: Cascade)
 }
