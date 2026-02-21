@@ -8,10 +8,10 @@ const dealSchema = z.object({
   currency: z.string().optional(),
   stage: z.enum(['LEAD', 'QUALIFIED', 'PROPOSAL', 'NEGOTIATION', 'CLOSED_WON', 'CLOSED_LOST']),
   probability: z.number().min(0).max(100),
-  expectedCloseDate: z.string().optional(),
-  companyId: z.string().optional(),
-  contactId: z.string().optional(),
-  notes: z.string().optional(),
+  expectedCloseDate: z.string().optional().nullable(),
+  companyId: z.string().optional().nullable(),
+  contactId: z.string().optional().nullable(),
+  notes: z.string().optional().nullable(),
 })
 
 export async function GET(

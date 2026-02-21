@@ -11,7 +11,7 @@ const dealSchema = z.object({
   expectedCloseDate: z.string().optional().nullable(),
   companyId: z.string().optional().nullable(),
   contactId: z.string().optional().nullable(),
-  notes: z.string().optional(),
+  notes: z.string().optional().nullable(),
 })
 
 export async function GET(request: NextRequest) {
