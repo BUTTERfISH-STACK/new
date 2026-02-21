@@ -205,18 +205,19 @@ export function CreateDealDialog({
     }))
   }
   
-  // Validate form - defined inline to avoid closure issues
+  // Validate form
   const validateForm = () => {
-    const currentFormData = formData
+    const titleValue = formData.title
+    const valueValue = formData.value
     const newErrors: FormErrors = {}
     
-    if (!currentFormData.title || !currentFormData.title.trim()) {
+    if (!titleValue || titleValue.trim().length === 0) {
       newErrors.title = 'Deal title is required'
     }
     
     // Validate value - must be empty (optional), or a valid positive number
-    if (currentFormData.value !== '') {
-      const value = parseFloat(currentFormData.value)
+    if (valueValue !== '') {
+      const value = parseFloat(valueValue)
       if (isNaN(value) || value < 0) {
         newErrors.value = 'Please enter a valid positive number'
       }
@@ -414,9 +415,14 @@ export function CreateDealDialog({
             <Input
               placeholder="Enter deal title (e.g., Enterprise License - Acme Corp)"
               value={formData.title}
-              onChange={(e) =>
-                setFormData({ ...formData, title: e.target.value })
-              }
+              onChange={(e) => {
+                const newTitle = e.target.value
+                setFormData(prev => ({ ...prev, title: newTitle }))
+                // Clear error when user starts typing
+                if (errors.title) {
+                  setErrors(prev => ({ ...prev, title: undefined }))
+                }
+              }}
               className={errors.title ? 'border-red-500' : ''}
             />
             {errors.title && (
