@@ -6,9 +6,9 @@ const dealSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   value: z.number().min(0, 'Value must be positive'),
   currency: z.string().optional(),
-  stage: z.string(),
+  stage: z.enum(['LEAD', 'QUALIFIED', 'PROPOSAL', 'NEGOTIATION', 'CLOSED_WON', 'CLOSED_LOST']),
   probability: z.number().min(0).max(100),
-  expectedCloseDate: z.string().optional(),
+  expectedCloseDate: z.string().optional().nullable(),
   companyId: z.string().optional().nullable(),
   contactId: z.string().optional().nullable(),
   notes: z.string().optional(),
@@ -90,6 +90,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(deal, { status: 201 })
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.error('Validation error:', error.errors)
       return NextResponse.json(
         { error: 'Validation failed', details: error.errors },
         { status: 400 }
@@ -97,7 +98,7 @@ export async function POST(request: NextRequest) {
     }
     console.error('Error creating deal:', error)
     return NextResponse.json(
-      { error: 'Failed to create deal' },
+      { error: 'Failed to create deal', message: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     )
   }

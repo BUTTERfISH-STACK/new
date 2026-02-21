@@ -201,6 +201,10 @@ export function CreateDealDialog({
       newErrors.value = 'Please enter a valid number'
     }
     
+    if (isNaN(value) || value < 0) {
+      newErrors.value = 'Please enter a valid positive number'
+    }
+    
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }, [formData])
@@ -222,7 +226,7 @@ export function CreateDealDialog({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: formData.title,
-          value: formData.value ? parseFloat(formData.value) : 0,
+          value: isNaN(parseFloat(formData.value)) ? 0 : parseFloat(formData.value),
           currency: formData.currency,
           stage: formData.stage,
           probability: formData.probability,
@@ -698,30 +702,34 @@ export function CreateDealDialog({
           )}
 
           <DialogFooter className="gap-2">
-          <HoverTooltip content="Cancel and close this dialog">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
-              Cancel
-            </Button>
-          </HoverTooltip>
-          <HoverTooltip content="Create this deal and add it to your pipeline">
-            <Button type="submit" disabled={loading}>
-              {loading ? (
-                <>
-                  <span className="animate-spin mr-2">⏳</span>
-                  Creating...
-                </>
-              ) : (
-                <>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Create Deal
-                </>
-              )}
-            </Button>
-          </HoverTooltip>
+            <HoverTooltip content="Cancel and close this dialog">
+              <div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => onOpenChange(false)}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </HoverTooltip>
+            <HoverTooltip content="Create this deal and add it to your pipeline">
+              <div className="inline-block">
+                <Button type="submit" disabled={loading}>
+                  {loading ? (
+                    <>
+                      <span className="animate-spin mr-2">⏳</span>
+                      Creating...
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="mr-2 h-4 w-4" />
+                      Create Deal
+                    </>
+                  )}
+                </Button>
+              </div>
+            </HoverTooltip>
           </DialogFooter>
         </form>
       </DialogContent>
