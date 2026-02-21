@@ -127,6 +127,23 @@ export function CreateDealDialog({
     }
 
     if (open) {
+      // Reset form when dialog opens
+      setFormData({
+        title: '',
+        value: '',
+        currency: 'USD',
+        stage: 'LEAD' as DealStage,
+        probability: 10,
+        companyId: '',
+        companyName: '',
+        contactId: '',
+        contactName: '',
+        expectedCloseDate: '',
+        notes: '',
+      })
+      setErrors({})
+      setCompanySearch('')
+      setContactSearch('')
       fetchData()
     }
   }, [open])
