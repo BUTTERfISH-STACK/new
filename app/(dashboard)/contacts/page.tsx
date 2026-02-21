@@ -17,13 +17,20 @@ import {
 } from '@/components/ui/dialog'
 import { Contact } from '@/types'
 import { formatDate, getInitials } from '@/lib/utils'
-import { Plus, Search, Building2, Mail, Phone, User } from 'lucide-react'
+import { Plus, Search, Building2, Mail, Phone, User, AlertCircle } from 'lucide-react'
+
+interface FormErrors {
+  firstName?: string
+  lastName?: string
+  email?: string
+}
 
 export default function ContactsPage() {
   const [contacts, setContacts] = useState<Contact[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [createOpen, setCreateOpen] = useState(false)
+  const [errors, setErrors] = useState<FormErrors>({})
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -76,6 +83,7 @@ export default function ContactsPage() {
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault()
+    setErrors({})
     
     try {
       const res = await fetch('/api/contacts', {
@@ -101,7 +109,19 @@ export default function ContactsPage() {
         })
         toast.success('Contact created successfully')
       } else {
-        toast.error('Failed to create contact')
+        const error = await res.json()
+        // Handle validation errors from API
+        if (error.details && Array.isArray(error.details)) {
+          const newErrors: FormErrors = {}
+          error.details.forEach((err: { path: string[]; message: string }) => {
+            const field = err.path[0] as keyof FormErrors
+            if (field) newErrors[field] = err.message
+          })
+          setErrors(newErrors)
+          toast.error('Please fix the form errors')
+        } else {
+          toast.error(error.error || 'Failed to create contact')
+        }
       }
     } catch (error) {
       console.error('Failed to create contact:', error)
@@ -240,7 +260,10 @@ export default function ContactsPage() {
       )}
 
       {/* Create Dialog */}
-      <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+      <Dialog open={createOpen} onOpenChange={(open) => {
+        setCreateOpen(open)
+        if (!open) setErrors({})
+      }}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add New Contact</DialogTitle>
@@ -258,7 +281,14 @@ export default function ContactsPage() {
                     setFormData({ ...formData, firstName: e.target.value })
                   }
                   required
+                  className={errors.firstName ? 'border-red-500' : ''}
                 />
+                {errors.firstName && (
+                  <p className="text-xs text-red-500 flex items-center gap-1">
+                    <AlertCircle className="h-3 w-3" />
+                    {errors.firstName}
+                  </p>
+                )}
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">Last Name</label>
@@ -268,7 +298,14 @@ export default function ContactsPage() {
                     setFormData({ ...formData, lastName: e.target.value })
                   }
                   required
+                  className={errors.lastName ? 'border-red-500' : ''}
                 />
+                {errors.lastName && (
+                  <p className="text-xs text-red-500 flex items-center gap-1">
+                    <AlertCircle className="h-3 w-3" />
+                    {errors.lastName}
+                  </p>
+                )}
               </div>
             </div>
             <div className="space-y-2">
@@ -279,7 +316,14 @@ export default function ContactsPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
                 }
+                className={errors.email ? 'border-red-500' : ''}
               />
+              {errors.email && (
+                <p className="text-xs text-red-500 flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3" />
+                  {errors.email}
+                </p>
+              )}
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">Phone</label>

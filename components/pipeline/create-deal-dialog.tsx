@@ -189,7 +189,7 @@ export function CreateDealDialog({
   }
   
   // Validate form
-  const validateForm = useCallback((): boolean => {
+  const validateForm = useCallback((): { valid: boolean; errors: FormErrors } => {
     const newErrors: FormErrors = {}
     
     if (!formData.title.trim()) {
@@ -205,7 +205,7 @@ export function CreateDealDialog({
     }
     
     setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
+    return { valid: Object.keys(newErrors).length === 0, errors: newErrors }
   }, [formData])
   
   const handleSubmit = async (e: React.FormEvent) => {
@@ -214,8 +214,9 @@ export function CreateDealDialog({
     console.log('[Deal Form] Submit started')
     console.log('[Deal Form] Form data before validation:', JSON.stringify(formData))
     
-    if (!validateForm()) {
-      console.log('[Deal Form] Validation failed, errors:', JSON.stringify(errors))
+    const validation = validateForm()
+    if (!validation.valid) {
+      console.log('[Deal Form] Validation failed, errors:', JSON.stringify(validation.errors))
       toast.error('Please fix the form errors')
       return
     }
@@ -252,6 +253,7 @@ export function CreateDealDialog({
           companyId: formData.companyId || null,
           contactId: formData.contactId || null,
           expectedCloseDate: formData.expectedCloseDate || null,
+          notes: formData.notes || null,
         }),
       })
 

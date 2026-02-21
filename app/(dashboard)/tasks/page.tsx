@@ -16,13 +16,18 @@ import {
 } from '@/components/ui/dialog'
 import { Task } from '@/types'
 import { formatDate, formatRelativeDate } from '@/lib/utils'
-import { Plus, Search, CheckSquare, Calendar, Trash2 } from 'lucide-react'
+import { Plus, Search, CheckSquare, Calendar, Trash2, AlertCircle } from 'lucide-react'
+
+interface FormErrors {
+  title?: string
+}
 
 export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<'all' | 'pending' | 'completed' | 'overdue'>('all')
   const [createOpen, setCreateOpen] = useState(false)
+  const [errors, setErrors] = useState<FormErrors>({})
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -57,6 +62,7 @@ export default function TasksPage() {
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault()
+    setErrors({})
     
     try {
       const res = await fetch('/api/tasks', {
@@ -76,7 +82,19 @@ export default function TasksPage() {
         setFormData({ title: '', description: '', dueDate: '', priority: 'medium', dealId: '' })
         toast.success('Task created successfully')
       } else {
-        toast.error('Failed to create task')
+        const error = await res.json()
+        // Handle validation errors from API
+        if (error.details && Array.isArray(error.details)) {
+          const newErrors: FormErrors = {}
+          error.details.forEach((err: { path: string[]; message: string }) => {
+            const field = err.path[0] as keyof FormErrors
+            if (field) newErrors[field] = err.message
+          })
+          setErrors(newErrors)
+          toast.error('Please fix the form errors')
+        } else {
+          toast.error(error.error || 'Failed to create task')
+        }
       }
     } catch (error) {
       console.error('Failed to create task:', error)
@@ -244,7 +262,10 @@ export default function TasksPage() {
       )}
 
       {/* Create Dialog */}
-      <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+      <Dialog open={createOpen} onOpenChange={(open) => {
+        setCreateOpen(open)
+        if (!open) setErrors({})
+      }}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add New Task</DialogTitle>
@@ -259,7 +280,14 @@ export default function TasksPage() {
                   setFormData({ ...formData, title: e.target.value })
                 }
                 required
+                className={errors.title ? 'border-red-500' : ''}
               />
+              {errors.title && (
+                <p className="text-xs text-red-500 flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3" />
+                  {errors.title}
+                </p>
+              )}
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">Description</label>

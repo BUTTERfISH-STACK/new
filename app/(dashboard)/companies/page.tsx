@@ -16,13 +16,18 @@ import {
 } from '@/components/ui/dialog'
 import { Company } from '@/types'
 import { formatDate } from '@/lib/utils'
-import { Plus, Search, Building2, Globe, MapPin, Phone } from 'lucide-react'
+import { Plus, Search, Building2, Globe, MapPin, Phone, AlertCircle } from 'lucide-react'
+
+interface FormErrors {
+  name?: string
+}
 
 export default function CompaniesPage() {
   const [companies, setCompanies] = useState<Company[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [createOpen, setCreateOpen] = useState(false)
+  const [errors, setErrors] = useState<FormErrors>({})
   const [formData, setFormData] = useState({
     name: '',
     industry: '',
@@ -55,6 +60,7 @@ export default function CompaniesPage() {
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault()
+    setErrors({})
     
     try {
       const res = await fetch('/api/companies', {
@@ -70,7 +76,19 @@ export default function CompaniesPage() {
         setFormData({ name: '', industry: '', website: '', address: '', phone: '' })
         toast.success('Company created successfully')
       } else {
-        toast.error('Failed to create company')
+        const error = await res.json()
+        // Handle validation errors from API
+        if (error.details && Array.isArray(error.details)) {
+          const newErrors: FormErrors = {}
+          error.details.forEach((err: { path: string[]; message: string }) => {
+            const field = err.path[0] as keyof FormErrors
+            if (field) newErrors[field] = err.message
+          })
+          setErrors(newErrors)
+          toast.error('Please fix the form errors')
+        } else {
+          toast.error(error.error || 'Failed to create company')
+        }
       }
     } catch (error) {
       console.error('Failed to create company:', error)
@@ -206,7 +224,10 @@ export default function CompaniesPage() {
       )}
 
       {/* Create Dialog */}
-      <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+      <Dialog open={createOpen} onOpenChange={(open) => {
+        setCreateOpen(open)
+        if (!open) setErrors({})
+      }}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add New Company</DialogTitle>
@@ -223,7 +244,14 @@ export default function CompaniesPage() {
                   setFormData({ ...formData, name: e.target.value })
                 }
                 required
+                className={errors.name ? 'border-red-500' : ''}
               />
+              {errors.name && (
+                <p className="text-xs text-red-500 flex items-center gap-1">
+                  <AlertCircle className="h-3 w-3" />
+                  {errors.name}
+                </p>
+              )}
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">Industry</label>
