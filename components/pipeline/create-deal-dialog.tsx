@@ -196,13 +196,12 @@ export function CreateDealDialog({
       newErrors.title = 'Deal title is required'
     }
     
-    const value = formData.value ? parseFloat(formData.value) : 0
-    if (formData.value && isNaN(value)) {
-      newErrors.value = 'Please enter a valid number'
-    }
-    
-    if (isNaN(value) || value < 0) {
-      newErrors.value = 'Please enter a valid positive number'
+    // Validate value - must be empty (optional), or a valid positive number
+    if (formData.value !== '') {
+      const value = parseFloat(formData.value)
+      if (isNaN(value) || value < 0) {
+        newErrors.value = 'Please enter a valid positive number'
+      }
     }
     
     setErrors(newErrors)
@@ -220,13 +219,17 @@ export function CreateDealDialog({
     setLoading(true)
 
     try {
+      // Ensure value is a number, default to 0 if empty or invalid
+      const numValue = formData.value === '' ? 0 : parseFloat(formData.value)
+      const finalValue = isNaN(numValue) ? 0 : numValue
+      
       // Create the deal first
       const dealRes = await fetch('/api/deals', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: formData.title,
-          value: isNaN(parseFloat(formData.value)) ? 0 : parseFloat(formData.value),
+          value: finalValue,
           currency: formData.currency,
           stage: formData.stage,
           probability: formData.probability,
@@ -279,7 +282,15 @@ export function CreateDealDialog({
         setErrors({})
       } else {
         const error = await dealRes.json()
-        toast.error(error.error || 'Failed to create deal')
+        // Show more detailed error message
+        if (error.details && Array.isArray(error.details)) {
+          const errorMessages = error.details.map((e: { path: string[], message: string }) => 
+            `${e.path.join('.')}: ${e.message}`
+          ).join(', ')
+          toast.error(`Validation error: ${errorMessages}`)
+        } else {
+          toast.error(error.error || 'Failed to create deal')
+        }
       }
     } catch (error) {
       console.error('Failed to create deal:', error)

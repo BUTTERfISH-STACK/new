@@ -1,3 +1,4 @@
 {
-  "/api/deals/route": "app/api/deals/route.js"
+  "/api/deals/route": "app/api/deals/route.js",
+  "/(dashboard)/pipeline/page": "app/(dashboard)/pipeline/page.js"
 }
