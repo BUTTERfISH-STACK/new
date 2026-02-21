@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { HoverTooltip } from '@/components/ui/tooltip'
 import {
   Dialog,
   DialogContent,
@@ -132,10 +133,12 @@ export default function ActivitiesPage() {
             Track calls, emails, meetings, and notes
           </p>
         </div>
-        <Button onClick={() => setCreateOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Log Activity
-        </Button>
+        <HoverTooltip content="Log a new activity (call, email, meeting, or note)">
+          <Button onClick={() => setCreateOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            Log Activity
+          </Button>
+        </HoverTooltip>
       </div>
 
       {/* Activities List */}
@@ -229,7 +232,9 @@ export default function ActivitiesPage() {
               </select>
             </div>
             <DialogFooter>
+              <HoverTooltip content="Save this activity to your log">
               <Button type="submit">Log Activity</Button>
+            </HoverTooltip>
             </DialogFooter>
           </form>
         </DialogContent>

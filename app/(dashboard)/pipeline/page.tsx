@@ -24,6 +24,7 @@ import { DealColumn } from '@/components/pipeline/deal-column'
 import { CreateDealDialog } from '@/components/pipeline/create-deal-dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { HoverTooltip } from '@/components/ui/tooltip'
 import { 
   Plus, 
   LayoutGrid, 
@@ -435,28 +436,37 @@ function PipelineContent() {
             <div className="flex items-center bg-muted rounded-lg p-1">
               {VIEW_OPTIONS.map((option) => {
                 const Icon = option.icon
+                const tooltips: Record<string, string> = {
+                  kanban: 'View deals as draggable cards',
+                  table: 'View deals in table format',
+                  timeline: 'View deal progress timeline',
+                  heatmap: 'View revenue distribution by stage'
+                }
                 return (
-                  <button
-                    key={option.value}
-                    onClick={() => setView(option.value)}
-                    className={cn(
-                      "flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-colors",
-                      view === option.value 
-                        ? "bg-background shadow-sm" 
-                        : "text-muted-foreground hover:text-foreground"
-                    )}
-                    title={option.label}
-                  >
-                    <Icon className="h-4 w-4" />
-                    <span className="hidden md:inline">{option.label}</span>
-                  </button>
+                  <HoverTooltip key={option.value} content={tooltips[option.value]}>
+                    <button
+                      onClick={() => setView(option.value)}
+                      className={cn(
+                        "flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-colors",
+                        view === option.value 
+                          ? "bg-background shadow-sm" 
+                          : "text-muted-foreground hover:text-foreground"
+                      )}
+                      title={option.label}
+                    >
+                      <Icon className="h-4 w-4" />
+                      <span className="hidden md:inline">{option.label}</span>
+                    </button>
+                  </HoverTooltip>
                 )
               })}
             </div>
-            <Button onClick={() => setCreateOpen(true)}>
-              <Plus className="mr-2 h-4 w-4" />
-              New Deal
-            </Button>
+            <HoverTooltip content="Create a new deal in your pipeline">
+              <Button onClick={() => setCreateOpen(true)}>
+                <Plus className="mr-2 h-4 w-4" />
+                New Deal
+              </Button>
+            </HoverTooltip>
           </div>
         </div>
         
@@ -511,25 +521,31 @@ function PipelineContent() {
             />
           </div>
           
-          <Button
-            variant={showFilters ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setShowFilters(!showFilters)}
-          >
-            <Filter className="h-4 w-4 mr-2" />
-            Filters
-          </Button>
+          <HoverTooltip content="Filter deals by stage, value, or search criteria">
+            <Button
+              variant={showFilters ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setShowFilters(!showFilters)}
+            >
+              <Filter className="h-4 w-4 mr-2" />
+              Filters
+            </Button>
+          </HoverTooltip>
           
           {hasActiveFilters && (
-            <Button variant="ghost" size="sm" onClick={clearFilters}>
-              <X className="h-4 w-4 mr-1" />
-              Clear
-            </Button>
+            <HoverTooltip content="Clear all applied filters">
+              <Button variant="ghost" size="sm" onClick={clearFilters}>
+                <X className="h-4 w-4 mr-1" />
+                Clear
+              </Button>
+            </HoverTooltip>
           )}
           
-          <Button variant="outline" size="sm" onClick={fetchDeals}>
-            <RefreshCw className="h-4 w-4" />
-          </Button>
+          <HoverTooltip content="Refresh deals from server">
+            <Button variant="outline" size="sm" onClick={fetchDeals}>
+              <RefreshCw className="h-4 w-4" />
+            </Button>
+          </HoverTooltip>
         </div>
         
         {/* Filter Panel */}

@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { HoverTooltip } from '@/components/ui/tooltip'
 import {
   Dialog,
   DialogContent,
@@ -120,10 +121,12 @@ export default function CompaniesPage() {
             Manage your business accounts
           </p>
         </div>
-        <Button onClick={() => setCreateOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Company
-        </Button>
+        <HoverTooltip content="Create a new company in your CRM">
+          <Button onClick={() => setCreateOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Company
+          </Button>
+        </HoverTooltip>
       </div>
 
       {/* Search */}
@@ -186,13 +189,15 @@ export default function CompaniesPage() {
                   </div>
                 </div>
                 <div className="mt-4 flex gap-2">
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => handleDelete(company.id)}
-                  >
-                    Delete
-                  </Button>
+                  <HoverTooltip content="Permanently delete this company">
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleDelete(company.id)}
+                    >
+                      Delete
+                    </Button>
+                  </HoverTooltip>
                 </div>
               </CardContent>
             </Card>
@@ -258,7 +263,9 @@ export default function CompaniesPage() {
               />
             </div>
             <DialogFooter>
+              <HoverTooltip content="Save this company after filling required fields">
               <Button type="submit">Create Company</Button>
+            </HoverTooltip>
             </DialogFooter>
           </form>
         </DialogContent>

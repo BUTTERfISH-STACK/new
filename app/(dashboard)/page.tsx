@@ -7,13 +7,13 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
   ResponsiveContainer,
   PieChart,
   Pie,
   Cell,
   LineChart,
   Line,
+  Tooltip as RechartsTooltip,
 } from 'recharts'
 import {
   Card,
@@ -39,6 +39,7 @@ import {
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
+import { HoverTooltip } from '@/components/ui/tooltip'
 
 interface DashboardData {
   stats: {
@@ -183,10 +184,12 @@ function DashboardContent() {
           <h1 className="text-3xl font-bold">Dashboard</h1>
           <p className="text-muted-foreground">Overview of your sales pipeline</p>
         </div>
-        <Button variant="outline" onClick={fetchDashboard}>
-          <RefreshCw className="mr-2 h-4 w-4" />
-          Refresh
-        </Button>
+        <HoverTooltip content="Refresh dashboard data to see latest analytics">
+          <Button variant="outline" onClick={fetchDashboard}>
+            <RefreshCw className="mr-2 h-4 w-4" />
+            Refresh
+          </Button>
+        </HoverTooltip>
       </div>
 
       {/* Empty State */}
@@ -198,10 +201,12 @@ function DashboardContent() {
           <div className="text-center">
             <h2 className="text-xl font-semibold mb-2">No Data Yet</h2>
             <p className="text-muted-foreground mb-4">Start by creating your first deal to see analytics</p>
-            <Button onClick={() => router.push('/pipeline')}>
-              <Plus className="mr-2 h-4 w-4" />
-              Create Deal
-            </Button>
+            <HoverTooltip content="Navigate to Pipeline to create a new deal">
+              <Button onClick={() => router.push('/pipeline')}>
+                <Plus className="mr-2 h-4 w-4" />
+                Create Deal
+              </Button>
+            </HoverTooltip>
           </div>
         </div>
       )}
@@ -284,7 +289,7 @@ function DashboardContent() {
                       tick={{ fontSize: 12 }}
                     />
                     <YAxis className="text-xs" />
-                    <Tooltip
+                    <RechartsTooltip
                       contentStyle={{
                         backgroundColor: 'hsl(var(--card))',
                         border: '1px solid hsl(var(--border))',
@@ -326,7 +331,7 @@ function DashboardContent() {
                           />
                         ))}
                       </Pie>
-                      <Tooltip
+                      <RechartsTooltip
                         contentStyle={{
                           backgroundColor: 'hsl(var(--card))',
                           border: '1px solid hsl(var(--border))',

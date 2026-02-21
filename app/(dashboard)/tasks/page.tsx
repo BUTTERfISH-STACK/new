@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { HoverTooltip } from '@/components/ui/tooltip'
 import {
   Dialog,
   DialogContent,
@@ -146,23 +147,26 @@ export default function TasksPage() {
             Manage your tasks and action items
           </p>
         </div>
-        <Button onClick={() => setCreateOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Task
-        </Button>
+        <HoverTooltip content="Create a new task">
+          <Button onClick={() => setCreateOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Task
+          </Button>
+        </HoverTooltip>
       </div>
 
       {/* Filters */}
       <div className="mb-6 flex gap-2">
         {(['all', 'pending', 'completed', 'overdue'] as const).map((f) => (
-          <Button
-            key={f}
-            variant={filter === f ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setFilter(f)}
-          >
-            {f.charAt(0).toUpperCase() + f.slice(1)}
-          </Button>
+          <HoverTooltip key={f} content={`Show ${f} tasks`}>
+            <Button
+              variant={filter === f ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setFilter(f)}
+            >
+              {f.charAt(0).toUpperCase() + f.slice(1)}
+            </Button>
+          </HoverTooltip>
         ))}
       </div>
 
@@ -179,16 +183,18 @@ export default function TasksPage() {
               className={`transition-opacity ${task.completed ? 'opacity-60' : ''}`}
             >
               <CardContent className="flex items-center gap-4 p-4">
-                <button
-                  onClick={() => handleToggleComplete(task)}
-                  className={`flex h-6 w-6 items-center justify-center rounded-full border-2 transition-colors ${
-                    task.completed
-                      ? 'border-green-500 bg-green-500 text-white'
-                      : 'border-muted-foreground'
-                  }`}
-                >
-                  {task.completed && <CheckSquare className="h-4 w-4" />}
-                </button>
+                <HoverTooltip content="Mark this task as complete or incomplete">
+                  <button
+                    onClick={() => handleToggleComplete(task)}
+                    className={`flex h-6 w-6 items-center justify-center rounded-full border-2 transition-colors ${
+                      task.completed
+                        ? 'border-green-500 bg-green-500 text-white'
+                        : 'border-muted-foreground'
+                    }`}
+                  >
+                    {task.completed && <CheckSquare className="h-4 w-4" />}
+                  </button>
+                </HoverTooltip>
                 <div className="flex-1">
                   <p className={`font-medium ${task.completed ? 'line-through' : ''}`}>
                     {task.title}
@@ -222,13 +228,15 @@ export default function TasksPage() {
                     {task.deal && <span>{task.deal.title}</span>}
                   </div>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => handleDelete(task.id)}
-                >
-                  <Trash2 className="h-4 w-4 text-muted-foreground" />
-                </Button>
+                <HoverTooltip content="Permanently delete this task">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleDelete(task.id)}
+                  >
+                    <Trash2 className="h-4 w-4 text-muted-foreground" />
+                  </Button>
+                </HoverTooltip>
               </CardContent>
             </Card>
           ))}
@@ -292,7 +300,9 @@ export default function TasksPage() {
               </div>
             </div>
             <DialogFooter>
+              <HoverTooltip content="Save this task after filling required fields">
               <Button type="submit">Create Task</Button>
+            </HoverTooltip>
             </DialogFooter>
           </form>
         </DialogContent>

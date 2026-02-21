@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { HoverTooltip } from '@/components/ui/tooltip'
 import { Deal, DealStage, Company, Contact, Task } from '@/types'
 import { formatCurrency } from '@/lib/utils'
 import { 
@@ -616,10 +617,12 @@ export function CreateDealDialog({
           {/* Quick Task Creation */}
           <div className="border rounded-lg p-4 space-y-3">
             <div className="flex items-center justify-between">
-              <label className="text-sm font-medium flex items-center gap-2">
-                <Check className="h-4 w-4" />
-                Create Follow-up Task
-              </label>
+              <HoverTooltip content="Create a follow-up task when this deal is created">
+                <label className="text-sm font-medium flex items-center gap-2">
+                  <Check className="h-4 w-4" />
+                  Create Follow-up Task
+                </label>
+              </HoverTooltip>
               <button
                 type="button"
                 onClick={() => setCreateTask(!createTask)}
@@ -695,6 +698,7 @@ export function CreateDealDialog({
           )}
 
           <DialogFooter className="gap-2">
+          <HoverTooltip content="Cancel and close this dialog">
             <Button
               type="button"
               variant="outline"
@@ -702,6 +706,8 @@ export function CreateDealDialog({
             >
               Cancel
             </Button>
+          </HoverTooltip>
+          <HoverTooltip content="Create this deal and add it to your pipeline">
             <Button type="submit" disabled={loading}>
               {loading ? (
                 <>
@@ -715,6 +721,7 @@ export function CreateDealDialog({
                 </>
               )}
             </Button>
+          </HoverTooltip>
           </DialogFooter>
         </form>
       </DialogContent>
