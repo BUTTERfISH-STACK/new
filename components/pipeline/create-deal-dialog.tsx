@@ -211,17 +211,33 @@ export function CreateDealDialog({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
+    console.log('[Deal Form] Submit started')
+    console.log('[Deal Form] Form data before validation:', JSON.stringify(formData))
+    
     if (!validateForm()) {
+      console.log('[Deal Form] Validation failed, errors:', JSON.stringify(errors))
       toast.error('Please fix the form errors')
       return
     }
     
+    console.log('[Deal Form] Validation passed, proceeding to create deal')
     setLoading(true)
 
     try {
       // Ensure value is a number, default to 0 if empty or invalid
       const numValue = formData.value === '' ? 0 : parseFloat(formData.value)
       const finalValue = isNaN(numValue) ? 0 : numValue
+      
+      console.log('[Deal Form] Final payload:', JSON.stringify({
+        title: formData.title,
+        value: finalValue,
+        currency: formData.currency,
+        stage: formData.stage,
+        probability: formData.probability,
+        companyId: formData.companyId || null,
+        contactId: formData.contactId || null,
+        expectedCloseDate: formData.expectedCloseDate || null,
+      }))
       
       // Create the deal first
       const dealRes = await fetch('/api/deals', {
@@ -239,8 +255,11 @@ export function CreateDealDialog({
         }),
       })
 
+      console.log('[Deal Form] API Response status:', dealRes.status)
+
       if (dealRes.ok) {
         const deal = await dealRes.json()
+        console.log('[Deal Form] Deal created successfully:', deal)
         
         // Create task if requested
         if (createTask && taskTitle.trim()) {
@@ -282,6 +301,7 @@ export function CreateDealDialog({
         setErrors({})
       } else {
         const error = await dealRes.json()
+        console.log('[Deal Form] API Error response:', JSON.stringify(error))
         // Show more detailed error message
         if (error.details && Array.isArray(error.details)) {
           const errorMessages = error.details.map((e: { path: string[], message: string }) => 
@@ -293,7 +313,7 @@ export function CreateDealDialog({
         }
       }
     } catch (error) {
-      console.error('Failed to create deal:', error)
+      console.error('[Deal Form] Catch error:', error)
       toast.error('Failed to create deal')
     } finally {
       setLoading(false)

@@ -65,7 +65,10 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
+    console.log('[API /deals] Received request body:', JSON.stringify(body))
+    
     const validatedData = dealSchema.parse(body)
+    console.log('[API /deals] Validation passed, creating deal with:', JSON.stringify(validatedData))
 
     const deal = await prisma.deal.create({
       data: {
@@ -87,16 +90,17 @@ export async function POST(request: NextRequest) {
       },
     })
 
+    console.log('[API /deals] Deal created successfully:', JSON.stringify(deal))
     return NextResponse.json(deal, { status: 201 })
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.error('Validation error:', error.errors)
+      console.error('[API /deals] Validation error:', JSON.stringify(error.errors))
       return NextResponse.json(
         { error: 'Validation failed', details: error.errors },
         { status: 400 }
       )
     }
-    console.error('Error creating deal:', error)
+    console.error('[API /deals] Error creating deal:', error)
     return NextResponse.json(
       { error: 'Failed to create deal', message: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
