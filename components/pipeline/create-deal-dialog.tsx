@@ -205,17 +205,18 @@ export function CreateDealDialog({
     }))
   }
   
-  // Validate form
-  const validateForm = useCallback((): { valid: boolean; errors: FormErrors } => {
+  // Validate form - defined inline to avoid closure issues
+  const validateForm = () => {
+    const currentFormData = formData
     const newErrors: FormErrors = {}
     
-    if (!formData.title.trim()) {
+    if (!currentFormData.title || !currentFormData.title.trim()) {
       newErrors.title = 'Deal title is required'
     }
     
     // Validate value - must be empty (optional), or a valid positive number
-    if (formData.value !== '') {
-      const value = parseFloat(formData.value)
+    if (currentFormData.value !== '') {
+      const value = parseFloat(currentFormData.value)
       if (isNaN(value) || value < 0) {
         newErrors.value = 'Please enter a valid positive number'
       }
@@ -223,7 +224,7 @@ export function CreateDealDialog({
     
     setErrors(newErrors)
     return { valid: Object.keys(newErrors).length === 0, errors: newErrors }
-  }, [formData])
+  }
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
