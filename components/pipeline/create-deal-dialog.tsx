@@ -205,12 +205,14 @@ export function CreateDealDialog({
     }))
   }
   
-  // Validate form
-  const validateForm = () => {
-    const titleValue = formData.title
-    const valueValue = formData.value
+  // Validate form - takes formData as parameter to ensure we have latest values
+  const validateForm = (data: typeof formData): { valid: boolean; errors: FormErrors } => {
     const newErrors: FormErrors = {}
     
+    const titleValue = data.title
+    const valueValue = data.value
+    
+    // Check if title is empty or just whitespace
     if (!titleValue || titleValue.trim().length === 0) {
       newErrors.title = 'Deal title is required'
     }
@@ -229,13 +231,11 @@ export function CreateDealDialog({
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    e.stopPropagation()
     
-    console.log('[Deal Form] Submit started')
-    console.log('[Deal Form] Form data before validation:', JSON.stringify(formData))
-    
-    const validation = validateForm()
+    // Pass current formData to validation to ensure we have latest values
+    const validation = validateForm(formData)
     if (!validation.valid) {
-      console.log('[Deal Form] Validation failed, errors:', JSON.stringify(validation.errors))
       toast.error('Please fix the form errors')
       return
     }
