@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOIR & AUREUM | Luxury Fashion House</title>
+    <title>APEX & ORO | Premium Athletic Wear</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --black-primary: #0a0a0a;
-            --black-secondary: #141414;
+            --black-secondary: #111111;
             --black-accent: #1a1a1a;
             --gold-primary: #c9a962;
             --gold-light: #e8d5a3;
@@ -47,7 +47,7 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            opacity: 0.03;
+            opacity: 0.04;
             z-index: 9999;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
         }
@@ -58,44 +58,57 @@
             top: 0;
             left: 0;
             width: 100%;
-            padding: 30px 60px;
+            padding: 25px 60px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 1000;
             transition: all 0.4s ease;
+            background: transparent;
         }
 
         nav.scrolled {
-            background-color: var(--black-primary);
-            padding: 20px 60px;
+            background-color: rgba(10, 10, 10, 0.95);
+            padding: 15px 60px;
             box-shadow: 0 5px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
         }
 
         .logo {
-            font-family: 'Cinzel', serif;
-            font-size: 24px;
-            font-weight: 500;
-            letter-spacing: 4px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: 6px;
             color: var(--gold-primary);
             text-decoration: none;
+            text-transform: uppercase;
+        }
+
+        .logo span {
+            color: var(--text-white);
+            font-weight: 300;
         }
 
         .nav-links {
             display: flex;
-            gap: 50px;
+            gap: 45px;
             list-style: none;
         }
 
         .nav-links a {
             color: var(--text-white);
             text-decoration: none;
-            font-size: 12px;
-            font-weight: 500;
+            font-size: 11px;
+            font-weight: 600;
             letter-spacing: 3px;
             text-transform: uppercase;
             position: relative;
             padding-bottom: 5px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--gold-primary);
         }
 
         .nav-links a::after {
@@ -104,9 +117,9 @@
             bottom: 0;
             left: 0;
             width: 0;
-            height: 1px;
+            height: 2px;
             background: var(--gold-primary);
-            transition: width 0.4s ease;
+            transition: width 0.3s ease;
         }
 
         .nav-links a:hover::after {
@@ -122,8 +135,8 @@
         }
 
         .hamburger span {
-            width: 30px;
-            height: 1px;
+            width: 28px;
+            height: 2px;
             background: var(--gold-primary);
             transition: all 0.3s ease;
         }
@@ -136,27 +149,20 @@
             justify-content: center;
             position: relative;
             overflow: hidden;
+            background: linear-gradient(135deg, #0a0a0a 0%, #0f0f0f 50%, #0a0a0a 100%);
         }
 
-        .hero-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, var(--black-primary) 0%, var(--black-secondary) 50%, #0d0d0d 100%);
-            z-index: -2;
-        }
-
-        .hero-bg::before {
+        .hero::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(ellipse at 70% 30%, rgba(201, 169, 98, 0.08) 0%, transparent 60%),
-                        radial-gradient(ellipse at 30% 70%, rgba(201, 169, 98, 0.05) 0%, transparent 50%);
+            background: 
+                radial-gradient(ellipse at 80% 20%, rgba(201, 169, 98, 0.12) 0%, transparent 50%),
+                radial-gradient(ellipse at 20% 80%, rgba(201, 169, 98, 0.08) 0%, transparent 40%);
+            z-index: 0;
         }
 
         .hero-pattern {
@@ -166,72 +172,80 @@
             width: 100%;
             height: 100%;
             background-image: 
-                linear-gradient(rgba(201, 169, 98, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(201, 169, 98, 0.03) 1px, transparent 1px);
-            background-size: 60px 60px;
-            z-index: -1;
+                linear-gradient(rgba(201, 169, 98, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(201, 169, 98, 0.04) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 1;
         }
 
         .hero-content {
             text-align: center;
-            z-index: 1;
-            animation: fadeInUp 1.2s ease forwards;
+            z-index: 2;
+            animation: fadeInUp 1s ease forwards;
             opacity: 0;
         }
 
-        .hero-subtitle {
-            font-family: 'Cinzel', serif;
-            font-size: 14px;
-            letter-spacing: 8px;
+        .hero-badge {
+            display: inline-block;
+            padding: 10px 25px;
+            border: 1px solid var(--gold-primary);
+            font-family: 'Oswald', sans-serif;
+            font-size: 11px;
+            letter-spacing: 5px;
             color: var(--gold-primary);
-            margin-bottom: 30px;
+            margin-bottom: 35px;
             text-transform: uppercase;
         }
 
         .hero-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 80px;
-            font-weight: 400;
-            letter-spacing: 10px;
-            margin-bottom: 20px;
-            line-height: 1.1;
+            font-family: 'Oswald', sans-serif;
+            font-size: 100px;
+            font-weight: 700;
+            letter-spacing: 15px;
+            text-transform: uppercase;
+            line-height: 1;
+            margin-bottom: 15px;
         }
 
         .hero-title span {
             display: block;
-            font-style: italic;
             color: var(--gold-primary);
+            font-weight: 300;
+            letter-spacing: 25px;
+            font-size: 48px;
         }
 
         .hero-tagline {
-            font-size: 16px;
-            letter-spacing: 4px;
+            font-size: 14px;
+            letter-spacing: 8px;
             color: var(--text-gray);
-            margin-bottom: 60px;
+            margin-bottom: 50px;
             text-transform: uppercase;
         }
 
         .hero-cta {
             display: inline-block;
-            padding: 18px 50px;
-            border: 1px solid var(--gold-primary);
-            color: var(--gold-primary);
+            padding: 18px 55px;
+            background: var(--gold-primary);
+            color: var(--black-primary);
             text-decoration: none;
             font-size: 12px;
+            font-weight: 600;
             letter-spacing: 4px;
             text-transform: uppercase;
             transition: all 0.4s ease;
-            background: transparent;
+            border: none;
         }
 
         .hero-cta:hover {
-            background: var(--gold-primary);
-            color: var(--black-primary);
+            background: var(--gold-light);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(201, 169, 98, 0.3);
         }
 
         .scroll-indicator {
             position: absolute;
-            bottom: 50px;
+            bottom: 40px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
@@ -239,6 +253,7 @@
             align-items: center;
             gap: 10px;
             animation: bounce 2s infinite;
+            z-index: 2;
         }
 
         .scroll-indicator span {
@@ -249,14 +264,14 @@
         }
 
         .scroll-indicator .arrow {
-            width: 20px;
-            height: 20px;
-            border-right: 1px solid var(--gold-primary);
-            border-bottom: 1px solid var(--gold-primary);
+            width: 18px;
+            height: 18px;
+            border-right: 2px solid var(--gold-primary);
+            border-bottom: 2px solid var(--gold-primary);
             transform: rotate(45deg);
         }
 
-        /* Brand Philosophy Section */
+        /* Philosophy Section */
         .philosophy {
             padding: 120px 60px;
             background: var(--black-primary);
@@ -283,11 +298,11 @@
         .philosophy-image::before {
             content: '';
             position: absolute;
-            top: -20px;
-            left: -20px;
-            right: 20px;
-            bottom: 20px;
-            border: 1px solid var(--gold-primary);
+            top: -15px;
+            left: -15px;
+            right: 15px;
+            bottom: 15px;
+            border: 2px solid var(--gold-primary);
             z-index: -1;
         }
 
@@ -295,17 +310,17 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: grayscale(30%);
+            filter: grayscale(20%) contrast(1.1);
         }
 
         .philosophy-content {
-            padding: 40px;
+            padding: 20px;
         }
 
         .section-label {
-            font-family: 'Cinzel', serif;
-            font-size: 12px;
-            letter-spacing: 4px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 11px;
+            letter-spacing: 5px;
             color: var(--gold-primary);
             text-transform: uppercase;
             margin-bottom: 20px;
@@ -313,30 +328,50 @@
         }
 
         .section-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 48px;
-            font-weight: 400;
+            font-family: 'Oswald', sans-serif;
+            font-size: 52px;
+            font-weight: 500;
+            text-transform: uppercase;
             margin-bottom: 30px;
-            line-height: 1.2;
+            line-height: 1.1;
         }
 
         .section-title span {
             color: var(--gold-primary);
-            font-style: italic;
         }
 
         .philosophy-text {
             color: var(--text-gray);
-            font-size: 16px;
-            line-height: 1.8;
-            margin-bottom: 40px;
+            font-size: 15px;
+            line-height: 1.9;
+            margin-bottom: 30px;
         }
 
-        .philosophy-signature {
-            font-family: 'Playfair Display', serif;
-            font-size: 24px;
-            font-style: italic;
+        .philosophy-features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .feature-item {
+            padding: 20px;
+            border-left: 2px solid var(--gold-primary);
+            background: rgba(201, 169, 98, 0.03);
+        }
+
+        .feature-item h4 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 14px;
+            letter-spacing: 2px;
             color: var(--gold-primary);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .feature-item p {
+            color: var(--text-light-gray);
+            font-size: 13px;
         }
 
         /* Collection Section */
@@ -371,7 +406,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(to top, rgba(10, 10, 10, 0.9) 0%, transparent 50%);
+            background: linear-gradient(to top, rgba(10, 10, 10, 0.95) 0%, rgba(10, 10, 10, 0.4) 40%, transparent 70%);
             z-index: 1;
             opacity: 0;
             transition: opacity 0.4s ease;
@@ -386,11 +421,26 @@
             height: 100%;
             object-fit: cover;
             transition: transform 0.6s ease;
-            filter: grayscale(20%);
+            filter: grayscale(10%);
         }
 
         .collection-item:hover img {
-            transform: scale(1.1);
+            transform: scale(1.12);
+        }
+
+        .collection-item-badge {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 8px 15px;
+            background: var(--gold-primary);
+            color: var(--black-primary);
+            font-family: 'Oswald', sans-serif;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            z-index: 2;
         }
 
         .collection-item-content {
@@ -415,27 +465,32 @@
             letter-spacing: 3px;
             color: var(--gold-primary);
             text-transform: uppercase;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .collection-item-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 24px;
-            margin-bottom: 10px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 26px;
+            font-weight: 500;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: 2px;
         }
 
         .collection-item-price {
-            font-size: 14px;
+            font-size: 15px;
             color: var(--text-gray);
             margin-bottom: 20px;
+            font-weight: 500;
         }
 
         .collection-item-btn {
             display: inline-block;
-            padding: 12px 30px;
-            border: 1px solid var(--gold-primary);
-            color: var(--gold-primary);
+            padding: 14px 35px;
+            background: var(--gold-primary);
+            color: var(--black-primary);
             font-size: 11px;
+            font-weight: 600;
             letter-spacing: 3px;
             text-transform: uppercase;
             text-decoration: none;
@@ -443,64 +498,88 @@
         }
 
         .collection-item-btn:hover {
-            background: var(--gold-primary);
-            color: var(--black-primary);
+            background: var(--gold-light);
         }
 
-        /* Craftsmanship Section */
-        .craftsmanship {
+        /* Technology Section */
+        .technology {
             padding: 150px 60px;
             position: relative;
             overflow: hidden;
             background: var(--black-primary);
         }
 
-        .craftsmanship::before {
+        .technology::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(ellipse at 50% 50%, rgba(201, 169, 98, 0.05) 0%, transparent 70%);
+            background: radial-gradient(ellipse at 50% 50%, rgba(201, 169, 98, 0.06) 0%, transparent 70%);
         }
 
-        .craftsmanship-content {
+        .technology-content {
             text-align: center;
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
             position: relative;
             z-index: 1;
         }
 
-        .craftsmanship-number {
-            font-family: 'Playfair Display', serif;
-            font-size: 120px;
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .tech-item {
+            padding: 40px 25px;
+            background: var(--black-secondary);
+            border: 1px solid rgba(201, 169, 98, 0.15);
+            transition: all 0.4s ease;
+        }
+
+        .tech-item:hover {
+            border-color: var(--gold-primary);
+            transform: translateY(-10px);
+        }
+
+        .tech-icon {
+            font-family: 'Oswald', sans-serif;
+            font-size: 36px;
             color: var(--gold-primary);
-            opacity: 0.1;
-            position: absolute;
-            top: -60px;
-            left: 50%;
-            transform: translateX(-50%);
+            margin-bottom: 20px;
         }
 
-        .craftsmanship-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 48px;
-            margin-bottom: 30px;
+        .tech-name {
+            font-family: 'Oswald', sans-serif;
+            font-size: 14px;
+            letter-spacing: 3px;
+            color: var(--text-white);
+            text-transform: uppercase;
+            margin-bottom: 15px;
         }
 
-        .craftsmanship-text {
+        .tech-desc {
             color: var(--text-gray);
-            font-size: 18px;
-            line-height: 1.8;
-            margin-bottom: 50px;
+            font-size: 13px;
+            line-height: 1.7;
         }
 
-        .craftsmanship-stats {
+        /* Stats Section */
+        .stats {
+            padding: 100px 60px;
+            background: linear-gradient(135deg, var(--black-secondary) 0%, var(--black-primary) 100%);
+            border-top: 1px solid rgba(201, 169, 98, 0.1);
+            border-bottom: 1px solid rgba(201, 169, 98, 0.1);
+        }
+
+        .stats-grid {
             display: flex;
             justify-content: center;
-            gap: 80px;
+            gap: 120px;
         }
 
         .stat-item {
@@ -508,15 +587,17 @@
         }
 
         .stat-number {
-            font-family: 'Playfair Display', serif;
-            font-size: 48px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 64px;
+            font-weight: 700;
             color: var(--gold-primary);
+            line-height: 1;
             margin-bottom: 10px;
         }
 
         .stat-label {
             font-size: 12px;
-            letter-spacing: 3px;
+            letter-spacing: 4px;
             color: var(--text-gray);
             text-transform: uppercase;
         }
@@ -534,14 +615,17 @@
         }
 
         .newsletter-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 36px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 42px;
+            text-transform: uppercase;
             margin-bottom: 20px;
+            letter-spacing: 3px;
         }
 
         .newsletter-text {
             color: var(--text-gray);
             margin-bottom: 40px;
+            font-size: 15px;
         }
 
         .newsletter-form {
@@ -556,7 +640,7 @@
             padding: 18px 0;
             background: transparent;
             border: none;
-            border-bottom: 1px solid rgba(201, 169, 98, 0.3);
+            border-bottom: 1px solid rgba(201, 169, 98, 0.4);
             color: var(--text-white);
             font-family: 'Montserrat', sans-serif;
             font-size: 14px;
@@ -573,11 +657,11 @@
         }
 
         .newsletter-btn {
-            padding: 18px 40px;
+            padding: 18px 45px;
             background: var(--gold-primary);
             border: none;
             color: var(--black-primary);
-            font-family: 'Montserrat', sans-serif;
+            font-family: 'Oswald', sans-serif;
             font-size: 12px;
             font-weight: 600;
             letter-spacing: 3px;
@@ -588,6 +672,7 @@
 
         .newsletter-btn:hover {
             background: var(--gold-light);
+            transform: translateY(-2px);
         }
 
         .newsletter-success {
@@ -616,15 +701,22 @@
         }
 
         .footer-brand {
-            max-width: 300px;
+            max-width: 320px;
         }
 
         .footer-logo {
-            font-family: 'Cinzel', serif;
-            font-size: 20px;
-            letter-spacing: 4px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: 5px;
             color: var(--gold-primary);
+            text-transform: uppercase;
             margin-bottom: 20px;
+        }
+
+        .footer-logo span {
+            color: var(--text-white);
+            font-weight: 300;
         }
 
         .footer-desc {
@@ -634,7 +726,7 @@
         }
 
         .footer-title {
-            font-family: 'Cinzel', serif;
+            font-family: 'Oswald', sans-serif;
             font-size: 12px;
             letter-spacing: 3px;
             color: var(--text-white);
@@ -663,19 +755,20 @@
 
         .footer-social {
             display: flex;
-            gap: 20px;
+            gap: 15px;
         }
 
         .footer-social a {
-            width: 40px;
-            height: 40px;
-            border: 1px solid rgba(201, 169, 98, 0.3);
+            width: 44px;
+            height: 44px;
+            border: 1px solid rgba(201, 169, 98, 0.4);
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--gold-primary);
             text-decoration: none;
-            font-size: 14px;
+            font-size: 13px;
+            font-weight: 600;
             transition: all 0.3s ease;
         }
 
@@ -690,13 +783,14 @@
             border-top: 1px solid rgba(201, 169, 98, 0.1);
             color: var(--text-light-gray);
             font-size: 12px;
+            letter-spacing: 2px;
         }
 
         /* Animations */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
-                transform: translateY(40px);
+                transform: translateY(50px);
             }
             to {
                 opacity: 1;
@@ -709,16 +803,16 @@
                 transform: translateX(-50%) translateY(0);
             }
             40% {
-                transform: translateX(-50%) translateY(-10px);
+                transform: translateX(-50%) translateY(-12px);
             }
             60% {
-                transform: translateX(-50%) translateY(-5px);
+                transform: translateX(-50%) translateY(-6px);
             }
         }
 
         .reveal {
             opacity: 0;
-            transform: translateY(40px);
+            transform: translateY(50px);
             transition: all 0.8s ease;
         }
 
@@ -740,7 +834,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 40px;
+            gap: 35px;
             transition: right 0.4s ease;
         }
 
@@ -749,10 +843,12 @@
         }
 
         .mobile-menu a {
-            font-family: 'Playfair Display', serif;
-            font-size: 32px;
+            font-family: 'Oswald', sans-serif;
+            font-size: 36px;
             color: var(--text-white);
             text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 4px;
             transition: color 0.3s ease;
         }
 
@@ -763,7 +859,12 @@
         /* Responsive */
         @media (max-width: 1199px) {
             .hero-title {
-                font-size: 60px;
+                font-size: 70px;
+            }
+
+            .hero-title span {
+                font-size: 36px;
+                letter-spacing: 15px;
             }
 
             .philosophy-grid {
@@ -774,6 +875,14 @@
                 grid-template-columns: repeat(2, 1fr);
             }
 
+            .tech-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stats-grid {
+                gap: 60px;
+            }
+
             .footer-content {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -781,7 +890,12 @@
 
         @media (max-width: 768px) {
             nav {
-                padding: 20px 30px;
+                padding: 15px 30px;
+            }
+
+            .logo {
+                font-size: 22px;
+                letter-spacing: 4px;
             }
 
             .nav-links {
@@ -794,10 +908,20 @@
 
             .hero-title {
                 font-size: 48px;
-                letter-spacing: 5px;
+                letter-spacing: 8px;
             }
 
-            .hero-subtitle {
+            .hero-title span {
+                font-size: 24px;
+                letter-spacing: 10px;
+            }
+
+            .hero-badge {
+                font-size: 10px;
+                letter-spacing: 3px;
+            }
+
+            .hero-tagline {
                 font-size: 12px;
                 letter-spacing: 4px;
             }
@@ -819,6 +943,10 @@
                 font-size: 32px;
             }
 
+            .philosophy-features {
+                grid-template-columns: 1fr;
+            }
+
             .collection {
                 padding: 60px 30px;
             }
@@ -827,21 +955,33 @@
                 grid-template-columns: 1fr;
             }
 
-            .craftsmanship {
+            .technology {
                 padding: 80px 30px;
             }
 
-            .craftsmanship-title {
-                font-size: 32px;
+            .tech-grid {
+                grid-template-columns: 1fr;
             }
 
-            .craftsmanship-stats {
+            .stats {
+                padding: 60px 30px;
+            }
+
+            .stats-grid {
                 flex-direction: column;
                 gap: 40px;
             }
 
+            .stat-number {
+                font-size: 48px;
+            }
+
             .newsletter {
                 padding: 60px 30px;
+            }
+
+            .newsletter-title {
+                font-size: 28px;
             }
 
             .newsletter-form {
@@ -866,11 +1006,11 @@
 <body>
     <!-- Navigation -->
     <nav>
-        <a href="#" class="logo">NOIR & AUREUM</a>
+        <a href="#" class="logo">Apex <span>&</span> Oro</a>
         <ul class="nav-links">
-            <li><a href="#collection">Collection</a></li>
-            <li><a href="#philosophy">Atelier</a></li>
-            <li><a href="#craftsmanship">Craftsmanship</a></li>
+            <li><a href="#collection">Collections</a></li>
+            <li><a href="#technology">Technology</a></li>
+            <li><a href="#philosophy">About</a></li>
             <li><a href="#contact">Contact</a></li>
         </ul>
         <div class="hamburger" onclick="toggleMenu()">
@@ -882,23 +1022,22 @@
 
     <!-- Mobile Menu -->
     <div class="mobile-menu">
-        <a href="#collection" onclick="toggleMenu()">Collection</a>
-        <a href="#philosophy" onclick="toggleMenu()">Atelier</a>
-        <a href="#craftsmanship" onclick="toggleMenu()">Craftsmanship</a>
+        <a href="#collection" onclick="toggleMenu()">Collections</a>
+        <a href="#technology" onclick="toggleMenu()">Technology</a>
+        <a href="#philosophy" onclick="toggleMenu()">About</a>
         <a href="#contact" onclick="toggleMenu()">Contact</a>
     </div>
 
     <!-- Hero Section -->
     <section class="hero">
-        <div class="hero-bg"></div>
         <div class="hero-pattern"></div>
         <div class="hero-content">
-            <span class="hero-subtitle">Est. MMXV</span>
+            <span class="hero-badge">Professional Grade</span>
             <h1 class="hero-title">
-                Elegance
-                <span>Redefined</span>
+                Dominate
+                <span>Your Limits</span>
             </h1>
-            <p class="hero-tagline">Where Midnight Meets Gold</p>
+            <p class="hero-tagline">Precision Engineered Performance</p>
             <a href="#collection" class="hero-cta">Explore Collection</a>
         </div>
         <div class="scroll-indicator">
@@ -912,22 +1051,39 @@
         <div class="container">
             <div class="philosophy-grid">
                 <div class="philosophy-image reveal">
-                    <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=800&q=80" alt="Luxury Fashion">
+                    <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80" alt="Athletic Performance">
                 </div>
                 <div class="philosophy-content reveal">
-                    <span class="section-label">Our Philosophy</span>
-                    <h2 class="section-title">The Art of <span>Dark</span> Luxury</h2>
+                    <span class="section-label">The Apex Standard</span>
+                    <h2 class="section-title">Engineered for <span>Greatness</span></h2>
                     <p class="philosophy-text">
-                        At Noir & Aureum, we believe true luxury lies in the interplay of contrasts. 
-                        Our designs seamlessly blend the深度 of obsidian with the warmth of burnished gold, 
-                        creating pieces that command attention without demanding it. Each garment is a testament 
-                        to the belief that elegance is not about being noticed—it's about being remembered.
+                        Apex & Oro represents the pinnacle of athletic performance wear. We don't just 
+                        create gym clothes—we engineer performance. Every fiber is selected, every seam 
+                        is placed, and every design is tested to enhance your potential.
                     </p>
                     <p class="philosophy-text">
-                        Every stitch tells a story of uncompromising quality, every silhouette speaks to 
-                        refined taste, and every piece embodies the pinnacle of contemporary luxury.
+                        Born from the demands of professional athletes and refined for those who 
+                        demand nothing less than excellence. This is not workout gear. This is 
+                        performance armor.
                     </p>
-                    <span class="philosophy-signature">— The House of Noir & Aureum</span>
+                    <div class="philosophy-features">
+                        <div class="feature-item">
+                            <h4>Zero Restriction</h4>
+                            <p>4-way stretch that moves with you, never against you</p>
+                        </div>
+                        <div class="feature-item">
+                            <h4>Temperature Control</h4>
+                            <p>Adaptive cooling keeps you at peak performance</p>
+                        </div>
+                        <div class="feature-item">
+                            <h4>Durability Tested</h4>
+                            <p>Engineered to withstand the toughest sessions</p>
+                        </div>
+                        <div class="feature-item">
+                            <h4>Precision Fit</h4>
+                            <p>Compression mapping for optimal muscle support</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -938,93 +1094,121 @@
         <div class="container">
             <div class="collection-header reveal">
                 <span class="section-label">The Collection</span>
-                <h2 class="section-title">Signature <span>Pieces</span></h2>
+                <h2 class="section-title">Performance <span>Series</span></h2>
             </div>
             <div class="collection-grid">
                 <div class="collection-item reveal">
-                    <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80" alt="The Midnight Tuxedo">
+                    <span class="collection-item-badge">Best Seller</span>
+                    <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=600&q=80" alt="Apex Compression Top">
                     <div class="collection-item-content">
-                        <span class="collection-item-category">Tailoring</span>
-                        <h3 class="collection-item-name">The Midnight Tuxedo</h3>
-                        <span class="collection-item-price">$4,850</span>
-                        <a href="#" class="collection-item-btn">View Piece</a>
+                        <span class="collection-item-category">Training</span>
+                        <h3 class="collection-item-name">Apex Compression Top</h3>
+                        <span class="collection-item-price">$120</span>
+                        <a href="#" class="collection-item-btn">Shop Now</a>
                     </div>
                 </div>
                 <div class="collection-item reveal">
-                    <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=600&q=80" alt="Aurum Silk Evening Gown">
+                    <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&q=80" alt="Oro Elite Leggings">
                     <div class="collection-item-content">
-                        <span class="collection-item-category">Evening</span>
-                        <h3 class="collection-item-name">Aurum Silk Evening Gown</h3>
-                        <span class="collection-item-price">$7,200</span>
-                        <a href="#" class="collection-item-btn">View Piece</a>
+                        <span class="collection-item-category">Leggings</span>
+                        <h3 class="collection-item-name">Oro Elite Leggings</h3>
+                        <span class="collection-item-price">$145</span>
+                        <a href="#" class="collection-item-btn">Shop Now</a>
                     </div>
                 </div>
                 <div class="collection-item reveal">
-                    <img src="https://images.unsplash.com/photo-1445205170230-053b83016050?w=600&q=80" alt="Obsidian Cashmere Coat">
+                    <span class="collection-item-badge">New</span>
+                    <img src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=600&q=80" alt="Dominator Hoodie">
                     <div class="collection-item-content">
                         <span class="collection-item-category">Outerwear</span>
-                        <h3 class="collection-item-name">Obsidian Cashmere Coat</h3>
-                        <span class="collection-item-price">$5,600</span>
-                        <a href="#" class="collection-item-btn">View Piece</a>
+                        <h3 class="collection-item-name">Dominator Hoodie</h3>
+                        <span class="collection-item-price">$185</span>
+                        <a href="#" class="collection-item-btn">Shop Now</a>
                     </div>
                 </div>
                 <div class="collection-item reveal">
-                    <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&q=80" alt="Gold Thread Blazer">
+                    <img src="https://images.unsplash.com/photo-1594381898411-846e7d193883?w=600&q=80" alt="Apex Training Shorts">
                     <div class="collection-item-content">
-                        <span class="collection-item-category">Tailoring</span>
-                        <h3 class="collection-item-name">Gold Thread Blazer</h3>
-                        <span class="collection-item-price">$3,900</span>
-                        <a href="#" class="collection-item-btn">View Piece</a>
+                        <span class="collection-item-category">Shorts</span>
+                        <h3 class="collection-item-name">Apex Training Shorts</h3>
+                        <span class="collection-item-price">$95</span>
+                        <a href="#" class="collection-item-btn">Shop Now</a>
                     </div>
                 </div>
                 <div class="collection-item reveal">
-                    <img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=600&q=80" alt="Noir Pleated Dress">
+                    <span class="collection-item-badge">Limited</span>
+                    <img src="https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=600&q=80" alt="Oro Sports Bra">
                     <div class="collection-item-content">
-                        <span class="collection-item-category">Ready-to-Wear</span>
-                        <h3 class="collection-item-name">Noir Pleated Dress</h3>
-                        <span class="collection-item-price">$2,850</span>
-                        <a href="#" class="collection-item-btn">View Piece</a>
+                        <span class="collection-item-category">Support</span>
+                        <h3 class="collection-item-name">Oro Sports Bra</h3>
+                        <span class="collection-item-price">$85</span>
+                        <a href="#" class="collection-item-btn">Shop Now</a>
                     </div>
                 </div>
                 <div class="collection-item reveal">
-                    <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=600&q=80" alt="Aureum Velvet Blazer">
+                    <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&q=80" alt="Velocity Tank">
                     <div class="collection-item-content">
-                        <span class="collection-item-category">Tailoring</span>
-                        <h3 class="collection-item-name">Aureum Velvet Blazer</h3>
-                        <span class="collection-item-price">$4,200</span>
-                        <a href="#" class="collection-item-btn">View Piece</a>
+                        <span class="collection-item-category">Tops</span>
+                        <h3 class="collection-item-name">Velocity Tank</h3>
+                        <span class="collection-item-price">$75</span>
+                        <a href="#" class="collection-item-btn">Shop Now</a>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Craftsmanship Section -->
-    <section class="craftsmanship" id="craftsmanship">
+    <!-- Technology Section -->
+    <section class="technology" id="technology">
         <div class="container">
-            <div class="craftsmanship-content reveal">
-                <span class="craftsmanship-number">01</span>
-                <span class="section-label">Artisan Excellence</span>
-                <h2 class="craftsmanship-title">Mastery in Every Detail</h2>
-                <p class="craftsmanship-text">
-                    Our atelier represents the pinnacle of sartorial excellence. Each piece undergoes 
-                    over 200 hours of meticulous handcrafting, with artisans who have dedicated 
-                    generations to perfecting their craft. From the initial sketch to the final 
-                    stitch, perfection is not an aspiration—it's our standard.
-                </p>
-                <div class="craftsmanship-stats">
-                    <div class="stat-item">
-                        <div class="stat-number">200+</div>
-                        <div class="stat-label">Hours Per Piece</div>
+            <div class="technology-content reveal">
+                <span class="section-label">Innovation</span>
+                <h2 class="section-title">The Science of <span>Performance</span></h2>
+                <div class="tech-grid">
+                    <div class="tech-item">
+                        <div class="tech-icon">∿</div>
+                        <h4 class="tech-name">Aero-Mesh</h4>
+                        <p class="tech-desc">Strategic ventilation zones for maximum airflow and cooling where you need it most</p>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-number">47</div>
-                        <div class="stat-label">Master Artisans</div>
+                    <div class="tech-item">
+                        <div class="tech-icon">◈</div>
+                        <h4 class="tech-name">Flex-Weave</h4>
+                        <p class="tech-desc">4-way stretch technology that moves in harmony with your body's natural motion</p>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-number">12</div>
-                        <div class="stat-label">Weeks Production</div>
+                    <div class="tech-item">
+                        <div class="tech-icon">○</div>
+                        <h4 class="tech-name">Dry-Tech</h4>
+                        <p class="tech-desc">Advanced moisture-wicking that pulls sweat away from skin in milliseconds</p>
+                                       </div>
+                    <div class="tech-item">
+                        <div class="tech-icon">⬡</div>
+                        <h4 class="tech-name">Zero-Chafe</h4>
+                        <p class="tech-desc">Seamless construction with laser-cut edges eliminates friction entirely</p>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid reveal">
+                <div class="stat-item">
+                    <div class="stat-number">50K+</div>
+                    <div class="stat-label">Athletes Powered</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">98%</div>
+                    <div class="stat-label">Performance Rating</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">47</div>
+                    <div class="stat-label">Global Awards</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">12</div>
+                    <div class="stat-label">Patent Technologies</div>
                 </div>
             </div>
         </div>
@@ -1034,17 +1218,16 @@
     <section class="newsletter" id="contact">
         <div class="container">
             <div class="newsletter-content reveal">
-                <span class="section-label">Stay Connected</span>
-                <h2 class="newsletter-title">Join the Inner Circle</h2>
+                <span class="section-label">Stay Ahead</span>
+                <h2 class="newsletter-title">Join The Apex Squad</h2>
                 <p class="newsletter-text">
-                    Be the first to discover new collections, exclusive events, and the art of 
-                    luxury living.
+                    Get exclusive access to new drops, training tips, and athlete collaborations.
                 </p>
                 <form class="newsletter-form" onsubmit="handleNewsletterSubmit(event)">
-                    <input type="email" class="newsletter-input" placeholder="Enter your email address" required>
+                    <input type="email" class="newsletter-input" placeholder="Enter your email" required>
                     <button type="submit" class="newsletter-btn">Subscribe</button>
                 </form>
-                <p class="newsletter-success">Welcome to the Inner Circle. We'll be in touch soon.</p>
+                <p class="newsletter-success">Welcome to the squad. Check your inbox.</p>
             </div>
         </div>
     </section>
@@ -1054,27 +1237,26 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-brand">
-                    <div class="footer-logo">NOIR & AUREUM</div>
+                    <div class="footer-logo">Apex <span>&</span> Oro</div>
                     <p class="footer-desc">
-                        Where midnight elegance meets golden sophistication. A legacy of luxury 
-                        since 2015, crafting pieces for those who understand that true style 
-                        whispers rather than shouts.
+                        Precision-engineered athletic wear for those who refuse to compromise. 
+                        Every rep, every set, every mile—dominated in style.
                     </p>
                 </div>
                 <div class="footer-column">
-                    <h4 class="footer-title">Explore</h4>
+                    <h4 class="footer-title">Shop</h4>
                     <ul class="footer-links">
-                        <li><a href="#collection">Collection</a></li>
-                        <li><a href="#">Lookbook</a></li>
-                        <li><a href="#">Archive</a></li>
-                        <li><a href="#">Collaborations</a></li>
+                        <li><a href="#collection">New Arrivals</a></li>
+                        <li><a href="#collection">Best Sellers</a></li>
+                        <li><a href="#collection">Collections</a></li>
+                        <li><a href="#collection">Sale</a></li>
                     </ul>
                 </div>
                 <div class="footer-column">
-                    <h4 class="footer-title">House</h4>
+                    <h4 class="footer-title">Company</h4>
                     <ul class="footer-links">
                         <li><a href="#philosophy">Our Story</a></li>
-                        <li><a href="#craftsmanship">Craftsmanship</a></li>
+                        <li><a href="#technology">Technology</a></li>
                         <li><a href="#">Sustainability</a></li>
                         <li><a href="#">Careers</a></li>
                     </ul>
@@ -1083,14 +1265,14 @@
                     <h4 class="footer-title">Connect</h4>
                     <div class="footer-social">
                         <a href="#">IG</a>
-                        <a href="#">PI</a>
+                        <a href="#">YT</a>
                         <a href="#">TW</a>
-                        <a href="#">FB</a>
+                        <a href="#">TK</a>
                     </div>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2026 Noir & Aureum. All rights reserved.</p>
+                <p>&copy; 2026 Apex & Oro. All rights reserved. Dominate.</p>
             </div>
         </div>
     </footer>
@@ -1100,7 +1282,7 @@
         const nav = document.querySelector('nav');
         
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 100) {
+            if (window.scrollY > 80) {
                 nav.classList.add('scrolled');
             } else {
                 nav.classList.remove('scrolled');
